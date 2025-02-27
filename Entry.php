@@ -122,44 +122,44 @@
 </div>
 
 <?php 
-    $dbuser = 'mysql';
+    $dbuser = 'root';
     $dbpass = 'mysql';
     $dbserver = 'localhost';
-    $dbname = '';
+    $dbname = 'book';
     $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
     or die ('Ошибка ' . mysqli_error($mysql));
     if(isset($login) && isset($pass)){
         $errors= array();
-        $a = mysqli_query($mysql, "SELECT * FROM `visitors` where `Login` = '$login' and `Password` = '$pass'");
+        $a = mysqli_query($mysql, "SELECT * FROM `users` where `login` = '$login' and `password` = '$pass'");
         
         if(mysqli_num_rows($a) > 0) {
             $_SESSION['logged_user'] = $a;
             echo '<script>location.replace("index.php");</script>'; 
             foreach($a as $row){
-                $_SESSION['acc_user'] = $row['isAdmin'];
-                $_SESSION['acc_id'] = $row['id_visitor'];
-                $_SESSION['prof_user'] = "<div>Логин: " . $row['Login'] . "</br></br> Пароль: " . $row['Password'] . " </br></br> Фамилия: " . $row['Surname'] . 
-                "</br></br> Имя: " . $row['Name'] . "</br></br> Отчество: " . $row['Patronymic'] . " </br></br> Возраст: " . $row['Age'] . "</br></br> Адрес: " . $row['Address'] . "</br></br> Эл. почта: " . $row['Email'] . "</br></br></div>";
+                //$_SESSION['acc_user'] = $row['isAdmin'];
+                //$_SESSION['acc_id'] = $row['id_visitor'];
+                $_SESSION['prof_user'] = "<div>Логин: " . $row['login'] . "</br></br> Пароль: " . $row['password'] . " </br></br> Фамилия: " . $row['last_name'] . 
+                "</br></br> Имя: " . $row['first_name'] . "</br></br> Отчество: " . $row['middle_name'] . " </br></br> Возраст: " . $row['age'] . "</br></br> Адрес: " . $row['address'] . "</br></br> Эл. почта: " . $row['email'] . "</br></br></div>";
                 $_SESSION['log_user'] = "<div class='container'><form action='ProfileEdit.php' method='post'><div align=center><div class='form-group'>
-                <label for='login'>Ваш логин: </label></br><input type = 'text' value=". $row['Login'] ."
+                <label for='login'>Ваш логин: </label></br><input type = 'text' value=". $row['login'] ."
                 name='login' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='pass'>Ваш текущий пароль: </label></br><input type = 'password' value=". $row['Password'] ."
+                <label for='pass'>Ваш текущий пароль: </label></br><input type = 'password' value=". $row['password'] ."
                 name='pass' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='pass2'>Новый пароль: </label></br><input type = 'password' value=". $row['Password'] ."
+                <label for='pass2'>Новый пароль: </label></br><input type = 'password' value=". $row['password'] ."
                 name='pass2' size='20' step='any'></br></br></div><div class='form-group'>
                 <label for='pass3'>Подтвердите пароль: </label></br><input type = 'password'
                 name='pass3' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='surname'>Фамилия:</label></br><input type = 'text' value=". $row['Surname'] ."
+                <label for='surname'>Фамилия:</label></br><input type = 'text' value=". $row['last_name'] ."
                 name='surname' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='name'>Имя: </label></br><input type = 'text' value=". $row['Name'] ."
+                <label for='name'>Имя: </label></br><input type = 'text' value=". $row['first_name'] ."
                 name='name' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='patronymic'>Отчество: </label></br><input type = 'text' value=". $row['Patronymic'] ."
+                <label for='patronymic'>Отчество: </label></br><input type = 'text' value=". $row['middle_name'] ."
                 name='patronymic' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='age'>Возраст:</label></br><input type = 'text' value=". $row['Age'] ."
+                <label for='age'>Возраст:</label></br><input type = 'text' value=". $row['age'] ."
                 name='age' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='address'>Адрес (страна, город, улица, номер дома):</label></br><input type = 'text' value='". $row['Address'] ."'
+                <label for='address'>Адрес (страна, город, улица, номер дома):</label></br><input type = 'text' value='". $row['address'] ."'
                 name='address' size='20' step='any'></br></br></div><div class='form-group'>
-                <label for='email'>Ваша эл. почта: </label></br><input type = 'email' value=". $row['Email'] ."
+                <label for='email'>Ваша эл. почта: </label></br><input type = 'email' value=". $row['email'] ."
                 name='email' size='20' step='any'></br></br></div><div class='btn-group'>
                 <input type='submit' class='btn btn-primary' style='width:180px'
                 value='Редактировать данные'>

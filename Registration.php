@@ -8,7 +8,7 @@
     $patronymic = $_POST['patronymic'];
     $age = $_POST['age'];
     $address = $_POST['address'];
-    $nickname = $_POST['nickname'];
+   // $nickname = $_POST['nickname'];
     $email = $_POST['email'];   
 ?>
 
@@ -147,17 +147,17 @@
         </div>
     </form>
     <?php
-        $dbuser = 'mysql';
+        $dbuser = 'root';
         $dbpass = 'mysql';
         $dbserver = 'localhost';
-        $dbname = '';
+        $dbname = 'book';
         $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
         or die ('Ошибка ' . mysqli_error($mysql));
         $errors =  array();
         if(trim($login) == ''){
             $errors[]= 'Введите логин!';
         }
-        $r = mysqli_query($mysql,"SELECT * FROM `visitors` WHERE `Login`= '$login'");
+        $r = mysqli_query($mysql,"SELECT * FROM `users` WHERE `login`= '$login'");
 
         if(mysqli_num_rows($r) > 0) {
             $errors[]= 'Данный логин уже зарегистрирован!';
@@ -183,7 +183,7 @@
         if(trim($email) == ''){
             $errors[]= 'Введите эл. почту!';
         }
-        $e = mysqli_query($mysql,"SELECT * FROM `visitors` WHERE `Email`= '$email'");
+        $e = mysqli_query($mysql,"SELECT * FROM `users` WHERE `email`= '$email'");
 
         if(mysqli_num_rows($e) > 0) {
             $errors[]= 'Данная эл. почта уже зарегистрирована!';
@@ -191,8 +191,8 @@
         
         if(isset($login) && isset($pass) && isset($pass2) && isset($surname) && isset($name) && isset($patronymic) && isset($age) && isset($email) && isset($address)){
             if(empty($errors)){
-                $query1 = mysqli_query($mysql, "INSERT INTO `visitors`(IsAdmin, Surname, Name, Patronymic, Age, Email, Login, Password, Address) 
-                values ('0','$surname','$name','$patronymic','$age','$email','$login','$pass', '$address')");
+                $query1 = mysqli_query($mysql, "INSERT INTO `users`(first_name, last_name, middle_name, age, address, email, password, login) 
+                values ('$name','$surname','$patronymic','$age','$address','$email','$pass','$login')");
                 echo '<div style="color: green;"> Вы успешно зарегистрированы!<br>
                 Можете перейти на <a href="Entry.php">страницу авторизации!</a></div><hr>';
             } else{

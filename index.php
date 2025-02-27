@@ -236,16 +236,17 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
         <h2>Книги для обмена:</h2>
         <table class="tbl">
             <?php
-            $dbuser = 'mysql';
+            $dbuser = 'root';
             $dbpass = 'mysql';
             $dbserver = 'localhost';
-            $dbname = '';
+            $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT Name, Image, Image2, Price FROM products LIMIT 0, 3");
+            $query1 = mysqli_query($mysql, "SELECT Имя FROM `сотрудники` LIMIT 0, 3");
             while($row=mysqli_fetch_array($query1)) {
                 echo "<tr><td><b>" .  $row['Name'], "</b></br><br><a href='{$row['Image2']}'><img width='350' height='300' src='{$row['Image']}' /></a></br> Цена: ",
                 $row['Price'], " руб.</br>" . "<br />" . "</td></tr>";
+                // echo "<tr><td><b>" . $row['Имя'], "</b><br />" . "</td></tr>";
             }
             mysqli_close($mysql);
             ?>
