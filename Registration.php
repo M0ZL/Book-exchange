@@ -113,7 +113,7 @@
 </head>
 <body>
 <header>
-    <img src="images/logobooks.png" alt="Логотип">
+    <img src="images/logobooks1.png" alt="Логотип" width="300" height="300">
 </header>
 <div class="container">
     <h2 align="center">Регистрация</h2>
@@ -147,7 +147,7 @@
         </div>
     </form>
     <?php
-        $dbuser = 'root';
+        $dbuser = 'mysql';
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';

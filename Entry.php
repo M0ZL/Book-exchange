@@ -98,7 +98,7 @@
 </head>
 <body>
 <header>
-    <img src="images/logobooks.png" alt="Логотип" width="600" height="340">
+    <img src="images/logobooks1.png" alt="Логотип" width="300" height="300">
 </header>
 <div class="container">
     <h2 align="center">Войти</h2>
@@ -122,7 +122,7 @@
 </div>
 
 <?php 
-    $dbuser = 'root';
+    $dbuser = 'mysql';
     $dbpass = 'mysql';
     $dbserver = 'localhost';
     $dbname = 'book';

@@ -151,7 +151,7 @@ $c = $_GET['c'];
 </head>
 <body>
     <header>
-        <img src="images/logobooks.png" alt="Логотип">
+        <img src="images/logobooks1.png" alt="Логотип" width="300" height="300">
     </header>
     <nav>
         <a href="index.php">Новости</a>
@@ -236,7 +236,7 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
         <h2>Книги для обмена:</h2>
         <table class="tbl">
             <?php
-            $dbuser = 'root';
+            $dbuser = 'mysql';
             $dbpass = 'mysql';
             $dbserver = 'localhost';
             $dbname = 'book';
