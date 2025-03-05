@@ -39,12 +39,18 @@ session_start();
             margin-bottom: 20px;
         }
         .tbl td, .tbl th {
-            border: 1px solid #ddd;
+            border: 0px solid #ddd;
             padding: 10px;
             text-align: center;
         }
         .tbl th {
             background-color: #f2f2f2;
+        }
+        .book-image {
+            width: 40%; /* Уменьшаем ширину изображения до 30% от ширины ячейки */
+            height: auto; /* Высота подстраивается автоматически для сохранения пропорций */
+            display: block; /* Убирает лишние отступы вокруг изображения */
+            margin: 0 auto; /* Центрирование изображения по горизонтали */
         }
         .btn {
             display: inline-block;
@@ -95,82 +101,93 @@ session_start();
 </head>
 <body>
     <header>
-        <img src="images/logobooks1.png" alt="Логотип" width="300" height="300">
+        <img src="images/logobooks.png" alt="Логотип" width="300" height="300">
     </header>
     <div class="container">
-        <h2 align="center">
-            <?php
-            if ($_POST['buy']) {
-                unset($_SESSION['count_p']);
-                echo "<p align='center'><span style='font-size: 20px; color: black; border: 1px solid red;'>Спасибо за покупку!</span></p>";
-            }
-            ?>
             Полный список книг для обмена:
         </h2>
         <form action='' method='POST'>
-            <table class="tbl">
-                <?php
-                $dbuser = 'mysql';
-                $dbpass = 'mysql';
-                $dbserver = 'localhost';
-                $dbname = '';
-                $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
-                or die ('Ошибка ' . mysqli_error($mysql));
-                $query1 = mysqli_query($mysql, "SELECT id_product, Name, Image, Image2, Price, Count FROM products");
-                while ($row = mysqli_fetch_array($query1)) {
-                    echo "<tr>";
-                    echo "<td><b>" . $row['Name'] . "</b><br><br>";
-                    echo "<img width='350' height='300' src='{$row['Image']}' alt='{$row['Name']}'><br>";
-                    echo "Цена: " . $row['Price'] . " руб.<br>";
-                    if ($row['Count'] > 0) {
-                        echo "<label for='counp'>Укажите количество товара:</label><br>";
-                        echo "<input type='number' name='counp[]' min='0' max='{$row['Count']}' size='20' step='any'><br><br>";
-                        echo "<input type='checkbox' name='id[]' value='{$row['id_product']}'>";
-                        echo "<input type='hidden' name='tex[]' value='{$row['Name']}'>";
-                        echo "<br>В наличии: есть";
-                    } else {
-                        echo "<input type='checkbox' name='id[]' value='{$row['id_product']}'>";
-                        echo "<input type='hidden' name='tex[]' value='{$row['Name']}'>";
-                        echo "<br>В наличии: нет";
-                    }
-                    echo "</td>";
-                    echo "</tr>";
-                }
-                mysqli_close($mysql);
-                ?>
-            </table>
-            <div align="center">
-                <a href="SubmitRequest.php" class="btn">Оформление заявки</a>
-            </div>
-            <?php if (!$_POST['add']) { ?>
-                <div class="order-panel">
-                    <h3>Оформление заказа</h3>
-                </div>
-            <?php } ?>
+        <table class="tbl">
             <?php
-            if ($_POST['add']) {
-                echo "<div class='order-panel'>";
-                echo "<h3>Оформление заказа</h3>";
-                echo "<p>Количество выбранных продуктов: " . count($_POST['id']) . "</p>";
-                echo "<form method='POST'>";
-                echo "<label>Виды доставки (если необходимо):</label><br>";
-                echo "<input type='radio' name='d'> Курьером по городу<br>";
-                echo "<label>Адрес:</label><br>";
-                echo "<input type='text' name='address' size='20'><br>";
-                echo "<input type='radio' name='d1'> Доставка почтой<br>";
-                echo "<label>Адрес:</label><br>";
-                echo "<input type='text' name='address' size='20'><br><br>";
-                echo "<input type='submit' name='buy' value='Оформить заказ' class='btn'>";
-                echo "</form>";
-                echo "</div>";
+            $dbuser = 'mysql';
+            $dbpass = 'mysql';
+            $dbserver = 'localhost';
+            $dbname = 'book';
+            $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+            or die ('Ошибка ' . mysqli_error($mysql));
+            $query1 = mysqli_query($mysql, "SELECT ID, Название, ISBN, Фото, Автор, Жанр, Год_издания, Наличие FROM книги");
+
+            $count = 0; // Счетчик для отслеживания количества ячеек в строке
+            $cellsPerRow = 3; // Количество ячеек в одной строке
+
+            echo "<tr>"; // Начинаем первую строку
+
+            while ($row = mysqli_fetch_array($query1)) {
+                if ($count % $cellsPerRow == 0 && $count != 0) {
+                    echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
+                }
+
+                echo "<td><b>" . $row['Название'] . "</b><br><br>";
+                echo "<img src='{$row['Фото']}' alt='{$row['Название']}' class='book-image'><br>";
+                echo "ISBN: " . $row['ISBN'] . "<br>";
+                echo "Автор: " . $row['Автор'] . "<br>";
+                echo "Жанр: " . $row['Жанр'] . "<br>";
+                echo "Год издания: " . $row['Год_издания'] . "<br>";
+                echo "Наличие: " . $row['Наличие'] . "<br>";
+                echo "</td>";
+
+                $count++;
             }
+
+            // Если количество книг не кратно $cellsPerRow, добавляем пустые ячейки для завершения строки
+            while ($count % $cellsPerRow != 0) {
+                echo "<td></td>";
+                $count++;
+            }
+
+            echo "</tr>"; // Закрываем последнюю строку
+
+            mysqli_close($mysql);
             ?>
-            <?php if (isset($_SESSION['logged_user'])) { ?>
-                <div align="center">
-                    <input type='submit' name='add' value='Добавить книги в заказ' class='btn'>
-                    <input type='submit' name='clear' value='Удалить книги из заказа' class='btn'>
-                </div>
-            <?php } ?>
+        </table>
+        <div align="center">
+            <a href="SubmitRequest.php" class="btn">Оформление заявки</a><br><br>
+        </div>
+            <?php
+            $dbuser = 'mysql';
+            $dbpass = 'mysql';
+            $dbserver = 'localhost';
+            $dbname = 'book';
+            $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+            or die ('Ошибка ' . mysqli_error($mysql));
+                if(!empty($_SESSION['acc_user'])){
+                    echo "<p align=center><a href = 'AddProduct.php'>Добавить новую книгу</a><br><br>
+                    <a href = 'EditProduct.php'>Редактировать данные о книгах</a><br>";
+                    echo "<form action='Products.php'  method='post'><div align=center> 
+                    <table>
+                    <tr>
+                    <td >Список:<br><select class='form-control' name='list' size='1'>";
+                    
+                    $stmt = mysqli_query($mysql, "SELECT * FROM products");
+                    while ($row = mysqli_fetch_array($stmt))
+                        echo '<option value="' . $row["id_product"] . '">' . $row["id_product"] ." ". $row["Name"] ." ". $row["Price"] ." ". $row["Count"] . '</option>';
+                    echo "</select><br><br>";
+                    
+                    $list =$_POST["list"];
+                    if (isset($_POST['delete'])) {
+                        $strSQL2 = mysqli_query($mysql, "DELETE FROM `products` WHERE id_product = $list") 
+                        or die (mysqli_error($mysql));
+                    }
+                    
+                    echo "</td>
+                    </tr>
+                    </table>
+                    <div align='center'><input type='submit' class= 'btn btn-primary' style='width:210px' name='delete'
+                    value='Удалить данные о книге'></div>
+                    </div></form>";
+                }
+            mysqli_close($mysql);
+            ?>
         </form>
         <div align="center">
             <a href="index.php" class="btn">На главную страницу</a>

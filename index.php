@@ -84,12 +84,18 @@ $c = $_GET['c'];
             margin-bottom: 20px;
         }
         .tbl td, .tbl th {
-            border: 1px solid #ddd;
+            border: 0px solid #ddd;
             padding: 8px;
             text-align: center;
         }
         .tbl th {
             background-color: #f2f2f2;
+        }
+        .book-image {
+            width: 40%; /* Уменьшаем ширину изображения до 30% от ширины ячейки */
+            height: auto; /* Высота подстраивается автоматически для сохранения пропорций */
+            display: block; /* Убирает лишние отступы вокруг изображения */
+            margin: 0 auto; /* Центрирование изображения по горизонтали */
         }
         .btn {
             display: inline-block;
@@ -151,7 +157,7 @@ $c = $_GET['c'];
 </head>
 <body>
     <header>
-        <img src="images/logobooks1.png" alt="Логотип" width="300" height="300">
+        <img src="images/logobooks.png" alt="Логотип" width="300" height="300">
     </header>
     <nav>
         <a href="index.php">Новости</a>
@@ -242,32 +248,67 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT Имя FROM `сотрудники` LIMIT 0, 3");
-            while($row=mysqli_fetch_array($query1)) {
-                echo "<tr><td><b>" .  $row['Name'], "</b></br><br><a href='{$row['Image2']}'><img width='350' height='300' src='{$row['Image']}' /></a></br> Цена: ",
-                $row['Price'], " руб.</br>" . "<br />" . "</td></tr>";
-                // echo "<tr><td><b>" . $row['Имя'], "</b><br />" . "</td></tr>";
+            $query1 = mysqli_query($mysql, "SELECT ID, Название, ISBN, Фото, Автор, Жанр, Год_издания, Наличие FROM книги");
+
+            $count = 0; // Счетчик для отслеживания количества ячеек в строке
+            $cellsPerRow = 3; // Количество ячеек в одной строке
+            $maxBooks = 3; // Максимальное количество книг для отображения
+
+            echo "<tr>"; // Начинаем первую строку
+
+            while ($row = mysqli_fetch_array($query1)) {
+                if ($count >= $maxBooks) {
+                    break; // Прерываем цикл, если достигли максимального количества книг
+                }
+
+                if ($count % $cellsPerRow == 0 && $count != 0) {
+                    echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
+                }
+
+                echo "<td><b>" . $row['Название'] . "</b><br><br>";
+                echo "<img src='{$row['Фото']}' alt='{$row['Название']}' class='book-image'><br>";
+                echo "ISBN: " . $row['ISBN'] . "<br>";
+                echo "Автор: " . $row['Автор'] . "<br>";
+                echo "Жанр: " . $row['Жанр'] . "<br>";
+                echo "Год издания: " . $row['Год_издания'] . "<br>";
+                echo "Наличие: " . $row['Наличие'] . "<br>";
+                echo "</td>";
+
+                $count++;
             }
+
+            // Если количество книг не кратно $cellsPerRow, добавляем пустые ячейки для завершения строки
+            while ($count % $cellsPerRow != 0 && $count < $maxBooks) {
+                echo "<td></td>";
+                $count++;
+            }
+
+            echo "</tr>"; // Закрываем последнюю строку
+
             mysqli_close($mysql);
             ?>
         </table>
-        <a href="Books.php" class="btn">Полный список книг для обмена</a>
-        <h2>Последние новости:</h2>
+        <div style="text-align: center;">
+            <a href="Books.php" class="btn">Полный список книг для обмена</a>
+        </div>
+        <h2>Последние отзывы:</h2>
         <?php
         $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
         or die ('Ошибка ' . mysqli_error($mysql));
-        $query1 = mysqli_query($mysql, "SELECT Name_news, Description, Date_news FROM news Order by Date_news desc LIMIT 0, 3");
+        $query1 = mysqli_query($mysql, "SELECT s.Имя, k.Комментарий, k.Дата FROM комментарии k INNER JOIN сотрудники s ON k.Сотрудник_ID = s.ID Order by k.Дата desc LIMIT 0, 3");
         while($row=mysqli_fetch_array($query1)) {
             echo "
-            <div class='news-item'>
-                <h3>" .  $row['Name_news'],"</h3>
-                <p>", $row['Description'],"</p>
-                <h5>Дата публикации: ", $row['Date_news'],"</h5>
+            <div class='news-item' align='center'>
+                <h3>" .  $row['Имя'],"</h3>
+                <p>", $row['Комментарий'],"</p>
+                <h5>Дата написания: ", $row['Дата'],"</h5>
             </div>";
         }
         mysqli_close($mysql);
         ?>
-        <a href="index.php" class="btn">Все новости</a>
+        <div style="text-align: center;">
+            <a href="Comments.php" class="btn">Все отзывы</a>
+        </div>
     </div>
     <footer>
         <p>Контактная информация:</p>

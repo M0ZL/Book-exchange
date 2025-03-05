@@ -55,7 +55,7 @@
 </head>
 <body>
 <header>
-    <img width="300" height="300" src="images/logobooks1.png" />
+    <img width="300" height="300" src="images/logobooks.png" />
 </header>
 <div class='container'>
     <h2>Профиль</h2>

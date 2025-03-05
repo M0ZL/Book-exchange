@@ -74,7 +74,7 @@
 </head>
 <body>
 <header>
-    <img src="images/logobooks1.png" alt="Логотип" width="300" height="300">
+    <img src="images/logobooks.png" alt="Логотип" width="300" height="300">
     <h1>Редактирование профиля</h1>
 </header>
 
