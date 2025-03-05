@@ -1,0 +1,33 @@
+ Ошибка подключения к базе данных:
+
+<?php
+                $dbuser = 'mysql';
+                $dbpass = 'mysql';
+                $dbserver = 'localhost';
+                $dbname = '';
+                $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+                or die ('Ошибка ' . mysqli_error($mysql));
+
+Исп:
+В коде указано пустое значение для переменной $dbname, что приведёт к ошибке подключения к базе данных.
+
+Отсутствие проверки прав доступа
+
+При добавление книг в заказ
+
+Исп:
+
+if (isset($_SESSION['logged_user'])) {
+    // Пользователь авторизован, можно выполнять действия
+} else {
+    echo "<p align='center'><span style='font-size: 20px; color: red;'>Пожалуйста, авторизуйтесь для выполнения этого действия.</span></p>";
+}
+
+Отсутствие обработки ошибок при подключении к базе данных
+
+Исп:
+$mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname);
+if (!$mysql) {
+    error_log("Ошибка подключения к базе данных: " . mysqli_connect_error());
+    die('Ошибка подключения к базе данных. Пожалуйста, попробуйте позже.');
+}

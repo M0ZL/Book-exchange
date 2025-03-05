@@ -1,0 +1,65 @@
+Тоже самое "Хранение пароля в открытом виде"
+
+password_hash(), password_verify()
+
+Исп:
+if (isset($_SESSION['log_user'])) {
+    if (isset($login) && isset($pass) && isset($pass2) && isset($pass3) && isset($surname) && isset($name) && isset($patronymic) 
+    && isset($age) && isset($address) && isset($email)) {
+        $stmt = mysqli_prepare($mysql, "SELECT * FROM `users` WHERE `login` = ?");
+        mysqli_stmt_bind_param($stmt, 's', $login);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            if (password_verify($pass, $row['password'])) {
+                if (!empty($pass3)) {
+                    if ($pass2 != $pass3) {
+                        $errors[] = 'Подтвержденный пароль введен неверно!';
+                    } else {
+                        $hashed_password = password_hash($pass2, PASSWORD_DEFAULT);
+                        $stmt = mysqli_prepare($mysql, "UPDATE `users` SET last_name = ?, first_name = ?, middle_name = ?, age = ?, 
+                        email = ?, login = ?, password = ?, address = ? WHERE login = ?");
+                        mysqli_stmt_bind_param($stmt, 'sssssssss', $surname, $name, $patronymic, $age, $email, $login, $hashed_password, $address, $login);
+                        mysqli_stmt_execute($stmt);
+                        echo '<div class="success">Вы успешно отредактировали свои данные!</div><hr>';
+                    }
+                }
+            } else {
+                $errors[] = 'Текущий пароль введен неверно!';
+            }
+        } else {
+            $errors[] = 'Пользователь не найден!';
+        }
+
+        if (!empty($errors)) {
+            echo '<div class="error">' . array_shift($errors) . '</div><hr>';
+        }
+    }
+}
+
+Отсутствие проверки на пустые значения
+
+В коде не проверяется, были ли переданы значения всех полей в POST-запросе(может потерять данные)
+
+Исп:
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (empty($_POST['login']) || empty($_POST['pass']) || empty($_POST['pass2']) || empty($_POST['pass3']) || empty($_POST['surname']) 
+    || empty($_POST['name']) || empty($_POST['patronymic']) || empty($_POST['age']) || empty($_POST['address']) || empty($_POST['email'])) {
+        echo '<div class="error">Пожалуйста, заполните все поля.</div><hr>';
+    } else {
+        $login = $_POST['login'];
+        $pass = $_POST['pass'];
+        $pass2 = $_POST['pass2'];
+        $pass3 = $_POST['pass3'];
+        $surname = $_POST['surname'];
+        $name = $_POST['name'];
+        $patronymic = $_POST['patronymic'];
+        $age = $_POST['age'];
+        $address = $_POST['address'];
+        $email = $_POST['email'];
+        // Остальной код
+    }
+}
+

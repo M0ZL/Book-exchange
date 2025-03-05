@@ -1,0 +1,23 @@
+Хранение пароля в открытом виде
+
+$admin_password
+
+password_hash(),password_verify()
+
+Исп:
+$admin_username = 'admin';
+$admin_password_hash = password_hash('password123', PASSWORD_DEFAULT); // Хешируем пароль
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Проверка логина и пароля
+    if ($username === $admin_username && password_verify($password, $admin_password_hash)) {
+        $_SESSION['admin_logged_in'] = true;
+        header('Location: admin.php');
+        exit();
+    } else {
+        $error = "Неверный логин или пароль.";
+    }
+}

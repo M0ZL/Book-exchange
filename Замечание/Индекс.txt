@@ -1,0 +1,62 @@
+Неправильное использование массива $row:
+
+В коде используется $row['Name'], $row['Image2'], $row['Image'], $row['Price'], но в SQL-запросе выбирается только поле Имя
+Это вызовет ошибку, так как остальные поля отсутствуют в результате запроса
+
+Пример:echo "<tr><td><b>" .  $row['Name'], "</b></br><br><a href='{$row['Image2']}'><img width='350' height='300' src='{$row['Image']}' /></a></br> Цена: ",
+$row['Price'], " руб.</br>" . "<br />" . "</td></tr>";
+
+Исп:
+$query1 = mysqli_query($mysql, "SELECT Имя, Image, Image2, Price FROM `сотрудники` LIMIT 0, 3");
+
+Дублирование переменной $currentSlide в JavaScript
+
+Исп:
+
+Удалить одно из объявлений переменной currentSlide
+
+Немного доеба до тегов)) (неправильное использование тега <?)
+
+Пример: <p><? echo "Сайт посетили уже ".sprintf ("%0"."$digits"."d",$content)." человек!";?></p>
+
+Исп:
+
+<p><?php echo "Сайт посетили уже ".sprintf ("%0"."$digits"."d",$content)." человек!"; ?></p>
+
+Неправильное использование mysqli_error
+
+В коде используется mysqli_error($mysql) для вывода ошибок, но это может привести к утечке информации о базе данных
+
+Исп:
+
+error_log(mysqli_error($mysql));
+die("Произошла ошибка. Пожалуйста, попробуйте позже.");
+
+Можно забить)) (отсутствие проверки на существование $_SESSION['logged_user'])
+
+Используется $_SESSION['logged_user'], но нет проверки на то, инициализирована ли сессия или существует ли этот ключ
+
+Исп:
+
+if (isset($_SESSION['logged_user'])) {
+    echo '
+    <div align="right">
+        <a href="Profile.php" class="btn">Личный аккаунт</a>
+        <a href="Logout.php" class="btn">Выйти из аккаунта</a>
+    </div>';
+} else {
+    echo '
+    <div align="right">
+        <a href="Entry.php" class="btn">Вход</a>
+        <a href="Registration.php" class="btn">Регистрация</a>
+    </div>';
+}
+
+Неправильное использование sprintf
+
+В футере используется sprintf с неправильным форматом. Переменная $digits не определена
+
+Исп:
+
+Определить, что переменная $digits определена, или используйте фиксированное значение
+<p><?php echo "Сайт посетили уже " . sprintf("%05d", $content) . " человек!"; ?></p>

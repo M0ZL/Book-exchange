@@ -1,0 +1,48 @@
+Отсутствие проверки на существование данных в $_POST:
+
+Перед тем как использовать данные из $_POST, необходимо убедиться, что они существуют
+
+Исп:
+$login = isset($_POST['login']) ? $_POST['login'] : '';
+$pass = isset($_POST['pass']) ? $_POST['pass'] : '';
+$pass2 = isset($_POST['pass2']) ? $_POST['pass2'] : '';
+$surname = isset($_POST['surname']) ? $_POST['surname'] : '';
+$name = isset($_POST['name']) ? $_POST['name'] : '';
+$patronymic = isset($_POST['patronymic']) ? $_POST['patronymic'] : '';
+$age = isset($_POST['age']) ? $_POST['age'] : '';
+$address = isset($_POST['address']) ? $_POST['address'] : '';
+$email = isset($_POST['email']) ? $_POST['email'] : '';
+
+Хранение паролей в открытом виде
+
+password_hash()
+
+$hashed_pass = password_hash($pass, PASSWORD_DEFAULT);
+
+При проверке пароля password_verify()
+
+Отсутствие валидации данных
+
+В коде отсутствует валидация данных, таких как email, возраст и т.д
+Это может привести к некорректным данным в базе
+
+Исп:
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = 'Некорректный email!';
+}
+
+if (!is_numeric($age) || $age < 0 || $age > 120) {
+    $errors[] = 'Некорректный возраст!';
+}
+
+Отсутствие проверки на успешное подключение к базе данных
+
+Вместо or die использовать
+
+Исп:
+
+$mysql = new mysqli($dbserver, $dbuser, $dbpass, $dbname);
+if ($mysql->connect_error) {
+    die("Ошибка подключения: " . $mysql->connect_error);
+}
+

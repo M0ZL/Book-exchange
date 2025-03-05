@@ -1,0 +1,45 @@
+В коде используется прямое подставление переменной $userId в SQL-запрос:
+$deleteQuery = "DELETE FROM `users` WHERE `id` = $userId";
+
+Исп:
+if (isset($_GET['delete'])) {
+    $userId = intval($_GET['delete']);
+    $deleteQuery = "DELETE FROM `users` WHERE `id` = ?";
+    $stmt = mysqli_prepare($mysql, $deleteQuery);
+    mysqli_stmt_bind_param($stmt, 'i', $userId);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        echo "<script>alert('Пользователь удалён.')</script>";
+    } else {
+        echo "<script>alert('Ошибка при удалении пользователя: " . mysqli_error($mysql) . "')</script>";
+    }
+    mysqli_stmt_close($stmt);
+}
+Отсутствие проверки прав администратора
+
+Исп:
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_role'] !== 'superadmin') {
+    die('У вас недостаточно прав для выполнения этого действия');
+}
+
+Отсутствие экранирования вывода
+
+htmlspecialchars()
+
+Исп:
+function confirmDelete(userId, csrfToken) {
+    if (confirm('Вы действительно хотите удалить этого пользователя?')) {
+        window.location.href = "?delete=" + encodeURIComponent(userId) + "&csrf_token=" + encodeURIComponent(csrfToken);
+    }
+}
+
+Отсутствие обработки ошибок при подключении к базе данных
+
+or die
+
+Исп:
+$mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname);
+if (!$mysql) {
+    error_log("Ошибка подключения к базе данных: " . mysqli_connect_error());
+    die('Ошибка подключения к базе данных. Пожалуйста, попробуйте позже.');
+}

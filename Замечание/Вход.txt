@@ -1,0 +1,46 @@
+Хранение пароля в открытом виде:
+
+password_hash(), password_verify()
+
+Исп:
+
+if (isset($login) && isset($pass)) {
+    $errors = array();
+    $stmt = mysqli_prepare($mysql, "SELECT * FROM `users` WHERE `login` = ?");
+    mysqli_stmt_bind_param($stmt, 's', $login);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        if (password_verify($pass, $row['password'])) {
+            $_SESSION['logged_user'] = $row;
+            echo '<script>location.replace("index.php");</script>';
+            // Остальной код
+        } else {
+            $errors[] = 'Неверный логин или пароль!';
+        }
+    } else {
+        $errors[] = 'Неверный логин или пароль!';
+    }
+
+    if (!empty($errors)) {
+        echo '<div style="color: red;">' . array_shift($errors) . '</div><hr>';
+    }
+}
+
+Отсутствие проверки на пустые значения
+
+В коде не проверяется, были ли переданы значения login и pass в POST-запросе
+
+Исп:
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (empty($_POST['login']) || empty($_POST['pass'])) {
+        echo '<div style="color: red;">Пожалуйста, заполните все поля.</div><hr>';
+    } else {
+        $login = $_POST['login'];
+        $pass = $_POST['pass'];
+        // Остальной код
+    }
+}
