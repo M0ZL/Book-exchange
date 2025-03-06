@@ -147,7 +147,7 @@
         </div>
     </form>
     <?php
-        $dbuser = 'mysql';
+        $dbuser = 'mysql';//mysql
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';
@@ -157,7 +157,7 @@
         if(trim($login) == ''){
             $errors[]= 'Введите логин!';
         }
-        $r = mysqli_query($mysql,"SELECT * FROM `users` WHERE `login`= '$login'");
+        $r = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `имя_пользователя`= '$login'");
 
         if(mysqli_num_rows($r) > 0) {
             $errors[]= 'Данный логин уже зарегистрирован!';
@@ -183,7 +183,7 @@
         if(trim($email) == ''){
             $errors[]= 'Введите эл. почту!';
         }
-        $e = mysqli_query($mysql,"SELECT * FROM `users` WHERE `email`= '$email'");
+        $e = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `электронная_почта`= '$email'");
 
         if(mysqli_num_rows($e) > 0) {
             $errors[]= 'Данная эл. почта уже зарегистрирована!';
@@ -191,7 +191,7 @@
         
         if(isset($login) && isset($pass) && isset($pass2) && isset($surname) && isset($name) && isset($patronymic) && isset($age) && isset($email) && isset($address)){
             if(empty($errors)){
-                $query1 = mysqli_query($mysql, "INSERT INTO `users`(first_name, last_name, middle_name, age, address, email, password, login) 
+                $query1 = mysqli_query($mysql, "INSERT INTO `пользователи`(имя, фамилия, отчество, возраст, адрес, электронная_почта, пароль, имя_пользователя) 
                 values ('$name','$surname','$patronymic','$age','$address','$email','$pass','$login')");
                 echo '<div style="color: green;"> Вы успешно зарегистрированы!<br>
                 Можете перейти на <a href="Entry.php">страницу авторизации!</a></div><hr>';

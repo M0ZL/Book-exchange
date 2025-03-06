@@ -61,7 +61,7 @@
     <h2>Профиль</h2>
     <form action="Profile.php" method="post">
     <?php
-        $dbuser = 'mysql';
+        $dbuser = 'mysql';//mysql
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';
@@ -80,7 +80,7 @@
             }
         }
         else{
-            echo "<div><input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
+            echo "<div><input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br> 
             <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
             <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br>
             <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";

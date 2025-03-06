@@ -242,13 +242,13 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
         <h2>Книги для обмена:</h2>
         <table class="tbl">
             <?php
-            $dbuser = 'mysql';
+            $dbuser = 'mysql';//mysql
             $dbpass = 'mysql';
             $dbserver = 'localhost';
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT ID, Название, ISBN, Фото, Автор, Жанр, Год_издания, Наличие FROM книги");
+            $query1 = mysqli_query($mysql, "SELECT книга_id, название, isbn, фото, автор, жанр, год_издания, статус FROM книги");
 
             $count = 0; // Счетчик для отслеживания количества ячеек в строке
             $cellsPerRow = 3; // Количество ячеек в одной строке
@@ -265,13 +265,13 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
                     echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
                 }
 
-                echo "<td><b>" . $row['Название'] . "</b><br><br>";
-                echo "<img src='{$row['Фото']}' alt='{$row['Название']}' class='book-image'><br>";
-                echo "ISBN: " . $row['ISBN'] . "<br>";
-                echo "Автор: " . $row['Автор'] . "<br>";
-                echo "Жанр: " . $row['Жанр'] . "<br>";
-                echo "Год издания: " . $row['Год_издания'] . "<br>";
-                echo "Наличие: " . $row['Наличие'] . "<br>";
+                echo "<td><b>" . $row['название'] . "</b><br><br>";
+                echo '<img src="' . $row['фото'] . '" alt="Изображение" class="book-image"><br>';
+                echo "ISBN: " . $row['isbn'] . "<br>";
+                echo "Автор: " . $row['автор'] . "<br>";
+                echo "Жанр: " . $row['жанр'] . "<br>";
+                echo "Год издания: " . $row['год_издания'] . "<br>";
+                echo "Наличие: " . $row['статус'] . "<br>";
                 echo "</td>";
 
                 $count++;
@@ -295,13 +295,13 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
         <?php
         $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
         or die ('Ошибка ' . mysqli_error($mysql));
-        $query1 = mysqli_query($mysql, "SELECT s.Имя, k.Комментарий, k.Дата FROM комментарии k INNER JOIN сотрудники s ON k.Сотрудник_ID = s.ID Order by k.Дата desc LIMIT 0, 3");
+        $query1 = mysqli_query($mysql, "SELECT  r.комментарий, r.дата_создания, u.имя_пользователя FROM отзывы r INNER JOIN пользователи u ON r.пользователь_id = u.пользователь_id LIMIT 0, 3");
         while($row=mysqli_fetch_array($query1)) {
             echo "
             <div class='news-item' align='center'>
-                <h3>" .  $row['Имя'],"</h3>
-                <p>", $row['Комментарий'],"</p>
-                <h5>Дата написания: ", $row['Дата'],"</h5>
+                <h3>" .  $row['имя_пользователя'],"</h3>
+                <p>", $row['комментарий'],"</p>
+                <h5>Дата написания: ", $row['дата_создания'],"</h5>
             </div>";
         }
         mysqli_close($mysql);

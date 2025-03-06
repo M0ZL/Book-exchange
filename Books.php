@@ -115,7 +115,7 @@ session_start();
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT ID, Название, ISBN, Фото, Автор, Жанр, Год_издания, Наличие FROM книги");
+            $query1 = mysqli_query($mysql, "SELECT книга_id, название, isbn, фото, автор, жанр, год_издания, статус FROM книги");
 
             $count = 0; // Счетчик для отслеживания количества ячеек в строке
             $cellsPerRow = 3; // Количество ячеек в одной строке
@@ -127,13 +127,13 @@ session_start();
                     echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
                 }
 
-                echo "<td><b>" . $row['Название'] . "</b><br><br>";
-                echo "<img src='{$row['Фото']}' alt='{$row['Название']}' class='book-image'><br>";
-                echo "ISBN: " . $row['ISBN'] . "<br>";
-                echo "Автор: " . $row['Автор'] . "<br>";
-                echo "Жанр: " . $row['Жанр'] . "<br>";
-                echo "Год издания: " . $row['Год_издания'] . "<br>";
-                echo "Наличие: " . $row['Наличие'] . "<br>";
+                echo "<td><b>" . $row['название'] . "</b><br><br>";
+                echo '<img src="' . $row['фото'] . '" alt="Изображение" class="book-image"><br>';
+                echo "ISBN: " . $row['isbn'] . "<br>";
+                echo "Автор: " . $row['автор'] . "<br>";
+                echo "Жанр: " . $row['жанр'] . "<br>";
+                echo "Год издания: " . $row['год_издания'] . "<br>";
+                echo "Наличие: " . $row['статус'] . "<br>";
                 echo "</td>";
 
                 $count++;
@@ -160,7 +160,7 @@ session_start();
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-                if(!empty($_SESSION['acc_user'])){
+                if(!empty($_SESSION['prof_user'])){
                     echo "<p align=center><a href = 'AddProduct.php'>Добавить новую книгу</a><br><br>
                     <a href = 'EditProduct.php'>Редактировать данные о книгах</a><br>";
                     echo "<form action='Products.php'  method='post'><div align=center> 
