@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
--- Хост: localhost
--- Время создания: Мар 06 2025 г., 05:34
--- Версия сервера: 8.0.39
--- Версия PHP: 8.2.26
+-- Хост: 127.0.0.1:3306
+-- Время создания: Мар 09 2025 г., 21:09
+-- Версия сервера: 10.3.22-MariaDB
+-- Версия PHP: 7.1.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,25 +28,28 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `книги` (
-  `книга_id` int NOT NULL,
-  `пользователь_id` int DEFAULT NULL,
-  `isbn` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `название` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `автор` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `статус` enum('доступна','обменяна') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `дата_добавления` datetime DEFAULT CURRENT_TIMESTAMP,
-  `жанр` text COLLATE utf8mb4_general_ci NOT NULL,
-  `год_издания` date NOT NULL,
-  `фото` text COLLATE utf8mb4_general_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `книга_id` int(11) NOT NULL,
+  `пользователь_id` int(11) NOT NULL,
+  `isbn` varchar(100) DEFAULT NULL,
+  `название` varchar(255) NOT NULL,
+  `автор` varchar(255) DEFAULT NULL,
+  `статус` enum('доступна','обменяна') NOT NULL,
+  `дата_добавления` date DEFAULT current_timestamp(),
+  `жанр` varchar(255) DEFAULT NULL,
+  `год_издания` int(11) DEFAULT NULL,
+  `фото` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `книги`
 --
 
 INSERT INTO `книги` (`книга_id`, `пользователь_id`, `isbn`, `название`, `автор`, `статус`, `дата_добавления`, `жанр`, `год_издания`, `фото`) VALUES
-(2, 1, '123', 'test', 'net', 'доступна', '2025-03-06 00:59:25', 'mistic', '2025-03-07', 'images/1.jpg'),
-(3, 1, '22222', 'pupa', 'zapupa', 'доступна', '2025-03-06 01:11:36', 'uwu', '2025-03-02', 'images/1.jpg');
+(2, 1, '978-5-17-118103-1', 'Война и мир', 'Л.Н. Толстой', 'доступна', '2025-03-06', 'Роман-эпопея', 1869, 'images/1.jpg'),
+(3, 4, '978-5-386-10742-0', 'Уличный кот по имени Боб. Как человек и кот обрели надежду на улицах Лондона', 'Джеймс Боуэн', 'доступна', '2025-03-06', 'Роман', 2018, 'images/2.webp'),
+(4, 3, '978-5-17-163435-3', 'Дикий зверь', 'Жоэль Диккер', 'доступна', '2025-03-04', 'Роман', 2025, '/images/3.webp'),
+(5, 2, '978-5-00214-025-1', 'The Book. Как создать цивилизацию заново', 'Коллектив авторов', 'доступна', '2025-03-05', NULL, 2023, '/images/4.webp'),
+(6, 6, '978-5-00195-984-7', 'Египетская «Книга мертвых»', 'Коллектив авторов', 'доступна', '2025-03-02', 'Мифы и легенды', 2024, '/images/5.webp');
 
 -- --------------------------------------------------------
 
@@ -55,26 +58,33 @@ INSERT INTO `книги` (`книга_id`, `пользователь_id`, `isbn`
 --
 
 CREATE TABLE `пользователи` (
-  `пользователь_id` int NOT NULL,
-  `имя_пользователя` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `электронная_почта` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `пароль` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `роль` enum('гость','участник','администратор') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `рейтинг` int DEFAULT '0',
-  `дата_регистрации` datetime DEFAULT CURRENT_TIMESTAMP,
-  `фамилия` text COLLATE utf8mb4_general_ci NOT NULL,
-  `имя` text COLLATE utf8mb4_general_ci NOT NULL,
-  `отчество` text COLLATE utf8mb4_general_ci NOT NULL,
-  `адрес` text COLLATE utf8mb4_general_ci NOT NULL,
-  `возраст` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `пользователь_id` int(11) NOT NULL,
+  `ник_пользователя` varchar(255) NOT NULL,
+  `электронная_почта` varchar(255) NOT NULL,
+  `пароль` varchar(255) NOT NULL,
+  `роль` enum('участник','администратор') NOT NULL,
+  `рейтинг` int(11) DEFAULT 0,
+  `дата_регистрации` date DEFAULT current_timestamp(),
+  `фамилия` varchar(100) NOT NULL,
+  `имя` varchar(100) NOT NULL,
+  `отчество` varchar(100) DEFAULT NULL,
+  `адрес` varchar(255) DEFAULT NULL,
+  `телефон` varchar(15) NOT NULL,
+  `возраст` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `пользователи`
 --
 
-INSERT INTO `пользователи` (`пользователь_id`, `имя_пользователя`, `электронная_почта`, `пароль`, `роль`, `рейтинг`, `дата_регистрации`, `фамилия`, `имя`, `отчество`, `адрес`, `возраст`) VALUES
-(1, 'test1', 'dedkovanton20@yandex.ru', '123', 'гость', 0, '2025-03-06 00:06:23', 'Дедков', 'Антон', 'Геннадьевичь', '446660, обл. Самарская, р-н. Борский, с. Борское, ул. Песочная, д. 1', 21);
+INSERT INTO `пользователи` (`пользователь_id`, `ник_пользователя`, `электронная_почта`, `пароль`, `роль`, `рейтинг`, `дата_регистрации`, `фамилия`, `имя`, `отчество`, `адрес`, `телефон`, `возраст`) VALUES
+(1, 'test1', 'dedkovanton20@yandex.ru', '123', 'участник', 0, '2025-03-06', 'Дедков', 'Антон', 'Геннадьевич', '446660, обл. Самарская, р-н. Борский, с. Борское, ул. Песочная, д. 1', '+7701111111', 21),
+(2, 'test2', 'Nikita@example.com', '789', 'администратор', 0, '2025-03-01', 'Лавренко', 'Никита', NULL, NULL, '+77200000000', 22),
+(3, 'test3', 'Grin@example.com', '456', 'участник', 0, '2025-03-05', 'Гринцова', 'Дарья', 'Витальевна', NULL, '+77300000000', 23),
+(4, 'test4', 'Kurkina@example.com', '4444', 'участник', 0, '2025-03-05', 'Куркина', 'Юлия', NULL, NULL, '+77400004589', 22),
+(5, 'test5', 'Mamykin@example.com', '8888', 'участник', 0, '2025-03-05', 'Мамыкин', 'Глеб', 'Павлович', NULL, '+77500000893', 23),
+(6, 'test6', 'Aparin@example.com', '6969', 'участник', 0, '2025-03-05', 'Апарин', 'Александр', NULL, NULL, '+77600000000', 23),
+(7, 'test7', 'Zhanatov@example.com', '5151', 'участник', 0, '2025-03-05', 'Жанатов', 'Айсултан', NULL, NULL, '+77700000231', 22);
 
 -- --------------------------------------------------------
 
@@ -83,20 +93,20 @@ INSERT INTO `пользователи` (`пользователь_id`, `имя_�
 --
 
 CREATE TABLE `заявки_на_обмен` (
-  `заявка_id` int NOT NULL,
-  `пользователь_id` int DEFAULT NULL,
-  `книга_id` int DEFAULT NULL,
-  `параметры_поиска` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  `статус` enum('ожидание','завершена','отменена') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `дата_создания` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `заявка_id` int(11) NOT NULL,
+  `пользователь_id` int(11) DEFAULT NULL,
+  `книга_id` int(11) DEFAULT NULL,
+  `параметры_поиска` text DEFAULT NULL,
+  `статус` enum('ожидание','завершена','отменена') NOT NULL,
+  `дата_создания` date DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `заявки_на_обмен`
 --
 
 INSERT INTO `заявки_на_обмен` (`заявка_id`, `пользователь_id`, `книга_id`, `параметры_поиска`, `статус`, `дата_создания`) VALUES
-(2, 1, 2, NULL, 'ожидание', '2025-03-06 01:00:06');
+(2, 1, 2, NULL, 'ожидание', '2025-03-06');
 
 -- --------------------------------------------------------
 
@@ -105,13 +115,13 @@ INSERT INTO `заявки_на_обмен` (`заявка_id`, `пользова
 --
 
 CREATE TABLE `обмены` (
-  `обмен_id` int NOT NULL,
-  `заявка_id` int DEFAULT NULL,
-  `предложенная_книга_id` int DEFAULT NULL,
-  `трек_номер` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `статус` enum('ожидание','получена','завершена') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `дата_создания` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `обмен_id` int(11) NOT NULL,
+  `заявка_id` int(11) DEFAULT NULL,
+  `предложенная_книга_id` int(11) DEFAULT NULL,
+  `трек_номер` varchar(50) DEFAULT NULL,
+  `статус` enum('ожидание','получена','завершена') NOT NULL,
+  `дата_создания` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `обмены`
@@ -127,20 +137,21 @@ INSERT INTO `обмены` (`обмен_id`, `заявка_id`, `предлож�
 --
 
 CREATE TABLE `отзывы` (
-  `отзыв_id` int NOT NULL,
-  `пользователь_id` int DEFAULT NULL,
-  `обмен_id` int DEFAULT NULL,
-  `оценка` int DEFAULT NULL,
-  `комментарий` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  `дата_создания` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `отзыв_id` int(11) NOT NULL,
+  `пользователь_id` int(11) DEFAULT NULL,
+  `обмен_id` int(11) DEFAULT NULL,
+  `оценка` int(11) DEFAULT NULL,
+  `комментарий` text DEFAULT NULL,
+  `дата_создания` date DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `отзывы`
 --
 
 INSERT INTO `отзывы` (`отзыв_id`, `пользователь_id`, `обмен_id`, `оценка`, `комментарий`, `дата_создания`) VALUES
-(2, 1, 2, 5, 'tupo', '2025-03-06 01:00:35');
+(2, 1, 2, 5, 'Спасибо за отличный обмен книг! Очень доволен сервисом.', '2025-03-06'),
+(3, 2, 2, 5, 'Отличный сервис!', '2025-03-07');
 
 -- --------------------------------------------------------
 
@@ -149,12 +160,12 @@ INSERT INTO `отзывы` (`отзыв_id`, `пользователь_id`, `о�
 --
 
 CREATE TABLE `сообщения` (
-  `сообщение_id` int NOT NULL,
-  `отправитель_id` int DEFAULT NULL,
-  `получатель_id` int DEFAULT NULL,
-  `содержание` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `дата_отправки` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `сообщение_id` int(11) NOT NULL,
+  `отправитель_id` int(11) DEFAULT NULL,
+  `получатель_id` int(11) DEFAULT NULL,
+  `содержание` text NOT NULL,
+  `дата_отправки` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Индексы сохранённых таблиц
@@ -214,37 +225,37 @@ ALTER TABLE `сообщения`
 -- AUTO_INCREMENT для таблицы `книги`
 --
 ALTER TABLE `книги`
-  MODIFY `книга_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `книга_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `пользователи`
 --
 ALTER TABLE `пользователи`
-  MODIFY `пользователь_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `пользователь_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `заявки_на_обмен`
 --
 ALTER TABLE `заявки_на_обмен`
-  MODIFY `заявка_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `заявка_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `обмены`
 --
 ALTER TABLE `обмены`
-  MODIFY `обмен_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `обмен_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `отзывы`
 --
 ALTER TABLE `отзывы`
-  MODIFY `отзыв_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `отзыв_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `сообщения`
 --
 ALTER TABLE `сообщения`
-  MODIFY `сообщение_id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `сообщение_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

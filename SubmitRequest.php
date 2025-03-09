@@ -18,8 +18,9 @@
             text-align: center;
         }
         header img {
-            max-width: 100%;
-            height: auto;
+            height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
+            width: auto; /* Ширина будет автоматически подстраиваться */
+            margin: 0 10px; /* Добавляем отступы между изображениями */
         }
         .container {
             max-width: 1200px;
@@ -90,7 +91,9 @@
 </head>
 <body>
     <header>
-        <img src="images/logobooks.png" alt="Логотип" width="300" height="300">
+        <img src="images/l.png" alt="Логотип" align="left">
+        <img src="images/logobooks.png" alt="Логотип" align="center">
+        <img src="images/r.png" alt="Логотип" align="right">
     </header>
     <div class="container">
         <h1>Создание заявки на обмен книгами</h1>

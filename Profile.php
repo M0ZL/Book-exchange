@@ -22,8 +22,9 @@
         text-align: center;
     }
     header img {
-        max-width: 100%;
-        height: auto;
+        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
+        width: auto; /* Ширина будет автоматически подстраиваться */
+        margin: 0 10px; /* Добавляем отступы между изображениями */
     }
     .container {
         max-width: 1200px;
@@ -55,34 +56,37 @@
 </head>
 <body>
 <header>
-    <img width="300" height="300" src="images/logobooks.png" />
+    <img src="images/l.png" alt="Логотип" align="left">
+    <img src="images/logobooks.png" alt="Логотип" align="center">
+    <img src="images/r.png" alt="Логотип" align="right">
 </header>
 <div class='container'>
     <h2>Профиль</h2>
     <form action="Profile.php" method="post">
     <?php
-        $dbuser = 'mysql';//mysql
+        $dbuser = 'mysql';
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';
         $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
         or die ('Ошибка ' . mysqli_error($mysql));
-        $id = $_SESSION['acc_id'].['id_visitor'];
+        $id = $_SESSION['пользователь_id'];
         if(isset($_SESSION['prof_user'])){
             echo $_SESSION['prof_user'];    
         }
 
         if (isset($_POST['y'])){
             if(isset($_SESSION['acc_id'])){
-                $strSQL2 = mysqli_query($mysql, "DELETE FROM `visitors` WHERE id_visitor = '$id'") 
+                $strSQL2 = mysqli_query($mysql, "DELETE FROM `пользователи` WHERE пользователь_id = '$id'") 
                     or die (mysqli_error($mysql));
                 echo "<a href='Logout.php' class='btn'>Выйти из аккаунта</a></br>";
             }
         }
         else{
-            echo "<div><input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br> 
+            echo "<div><input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
             <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
-            <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br>
+            <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
+            <a href='MyBooks.php' class='btn'>Мои книги</a></br>
             <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
         }
         mysqli_close($mysql);

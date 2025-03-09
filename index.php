@@ -24,8 +24,9 @@ $c = $_GET['c'];
             text-align: center;
         }
         header img {
-            max-width: 100%;
-            height: auto;
+            height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
+            width: auto; /* Ширина будет автоматически подстраиваться */
+            margin: 0 10px; /* Добавляем отступы между изображениями */
         }
         nav {
             display: flex;
@@ -117,61 +118,80 @@ $c = $_GET['c'];
             margin-top: 20px;
         }
 		.carousel {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 20px;
+        }
 
-.carousel-inner {
-    display: flex;
-    transition: transform 0.5s ease-in-out; /* Плавный переход */
-}
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out; /* Плавный переход */
+        }
 
-.carousel-item {
-    min-width: 100%; /* Каждый слайд занимает 100% ширины */
-    box-sizing: border-box;
-}
+        .carousel-item {
+            min-width: 100%; /* Каждый слайд занимает 100% ширины */
+            box-sizing: border-box;
+        }
 
-.carousel-control {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 50%;
-    user-select: none;
-    z-index: 10;
-}
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            user-select: none;
+            z-index: 10;
+        }
 
-.carousel-control.prev {
-    left: 10px;
-}
+        .carousel-control.prev {
+            left: 10px;
+        }
 
-.carousel-control.next {
-    right: 10px;
-}
+        .carousel-control.next {
+            right: 10px;
+        }
+        .container1 {
+            width: 60%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .news-item {
+            text-align: left;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .news-item h2, .news-item p, .news-item h5 {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
     <header>
-        <img src="images/logobooks.png" alt="Логотип" width="300" height="300">
-    </header>
-    <nav>
-        <a href="index.php">Новости</a>
-        <a href="index.php">Обратная связь</a>
-        <a href="index.php">О нас</a>
-        <a href="index.php">Вакансии</a>
-        <a href="index.php">Схема проезда</a>
-        <a href="index.php">Справочная информация</a>
-        <a href="index.php">Доставка</a>
-        <a href="index.php">Сертификаты</a>
-        <a href="index.php">Прайс-лист</a>
-        <a href="index.php">Политика конфиденциальности</a>
-        <a href="index.php">История фирмы</a>
-    </nav>
+        <img src="images/l.png" alt="Логотип" align="left">
+        <img src="images/logobooks.png" alt="Логотип" align="center">
+        <img src="images/r.png" alt="Логотип" align="right">
+    </header><br>
+    <?php
+        if(isset($_SESSION['logged_user'])){
+            echo '
+            <div align="center">
+                <a href="Profile.php" class="btn">Личный аккаунт</a>
+                <a href="Logout.php" class="btn">Выйти из аккаунта</a>
+            </div>';
+        } else {
+            echo '
+            <div align="center">
+                <a href="Entry.php" class="btn">Вход</a>
+                <a href="Registration.php" class="btn">Регистрация</a>
+            </div>';
+        }
+        ?>
     <div class="container">
     <div class="carousel">
         <div class="carousel-inner">
@@ -224,31 +244,17 @@ goToSlide(currentSlide);
 // Запускаем автоматическую смену слайдов
 setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
 </script>
-        <?php
-        if(isset($_SESSION['logged_user'])){
-            echo '
-            <div align="right">
-                <a href="Profile.php" class="btn">Личный аккаунт</a>
-                <a href="Logout.php" class="btn">Выйти из аккаунта</a>
-            </div>';
-        } else {
-            echo '
-            <div align="right">
-                <a href="Entry.php" class="btn">Вход</a>
-                <a href="Registration.php" class="btn">Регистрация</a>
-            </div>';
-        }
-        ?>
+       
         <h2>Книги для обмена:</h2>
         <table class="tbl">
             <?php
-            $dbuser = 'mysql';//mysql
+            $dbuser = 'mysql';
             $dbpass = 'mysql';
             $dbserver = 'localhost';
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT книга_id, название, isbn, фото, автор, жанр, год_издания, статус FROM книги");
+            $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления FROM книги k INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id");
 
             $count = 0; // Счетчик для отслеживания количества ячеек в строке
             $cellsPerRow = 3; // Количество ячеек в одной строке
@@ -266,12 +272,14 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
                 }
 
                 echo "<td><b>" . $row['название'] . "</b><br><br>";
-                echo '<img src="' . $row['фото'] . '" alt="Изображение" class="book-image"><br>';
+                echo "<img src='{$row['фото']}' alt='{$row['название']}' class='book-image'><br>";
                 echo "ISBN: " . $row['isbn'] . "<br>";
                 echo "Автор: " . $row['автор'] . "<br>";
                 echo "Жанр: " . $row['жанр'] . "<br>";
                 echo "Год издания: " . $row['год_издания'] . "<br>";
-                echo "Наличие: " . $row['статус'] . "<br>";
+                echo "Статус: " . $row['статус'] . "<br>";
+                echo "Дата добавления: " . $row['дата_добавления'] . "<br>";
+                echo "Пользователь, добавивший книгу: " . $row['имя'] . "<br>";
                 echo "</td>";
 
                 $count++;
@@ -292,20 +300,23 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
             <a href="Books.php" class="btn">Полный список книг для обмена</a>
         </div>
         <h2>Последние отзывы:</h2>
+        <div class="container1">
         <?php
         $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
         or die ('Ошибка ' . mysqli_error($mysql));
-        $query1 = mysqli_query($mysql, "SELECT  r.комментарий, r.дата_создания, u.имя_пользователя FROM отзывы r INNER JOIN пользователи u ON r.пользователь_id = u.пользователь_id LIMIT 0, 3");
+        $query1 = mysqli_query($mysql, "SELECT k.отзыв_id, s.имя, k.оценка, k.комментарий, k.дата_создания FROM отзывы k INNER JOIN пользователи s ON k.пользователь_id = s.пользователь_id Order by k.дата_создания desc LIMIT 0, 3");
         while($row=mysqli_fetch_array($query1)) {
             echo "
-            <div class='news-item' align='center'>
-                <h3>" .  $row['имя_пользователя'],"</h3>
-                <p>", $row['комментарий'],"</p>
-                <h5>Дата написания: ", $row['дата_создания'],"</h5>
+            <div class='news-item'>
+            <h2 align='left'>" .  $row['имя'] . "</h2>
+            <h2 align='left'> Оценка: " .  $row['оценка'] . "</h2>
+            <p align='center'>" . $row['комментарий'] . "</p>
+            <h5 align='right'> Дата написания: " . $row['дата_создания'] . "</h5>  
             </div>";
         }
         mysqli_close($mysql);
         ?>
+        </div>
         <div style="text-align: center;">
             <a href="Comments.php" class="btn">Все отзывы</a>
         </div>
@@ -315,10 +326,7 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
         <p>Телефон: +7 (928) 2088745 (звонок бесплатный по всей России!)</p>
         <p>Наш режим работы:</p>
         <p>Понедельник - Воскресенье: 10:00 – 18:00</p>
-        <a href="index.php" class="btn">Вакансии</a>
-        <a href="index.php" class="btn">Политика конфиденциальности</a>
         <p>Электронная почта: <a href="mailto:BooksForExchange@gmail.com">Напишите нам!</a></p>
-        <p><? echo "Сайт посетили уже ".sprintf ("%0"."$digits"."d",$content)." человек!";?></p>
     </footer>
     <script>
         let currentSlide = 0;

@@ -9,7 +9,8 @@
     $age = $_POST['age'];
     $address = $_POST['address'];
    // $nickname = $_POST['nickname'];
-    $email = $_POST['email'];   
+    $email = $_POST['email'];
+    $tel = $_POST['tel'];    
 ?>
 
 <!DOCTYPE HTML>
@@ -32,8 +33,9 @@
         text-align: center;
     }
     header img {
-        max-width: 100%;
-        height: auto;
+        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
+        width: auto; /* Ширина будет автоматически подстраиваться */
+        margin: 0 10px; /* Добавляем отступы между изображениями */
     }
     .container {
         max-width: 1200px;
@@ -113,13 +115,15 @@
 </head>
 <body>
 <header>
-    <img src="images/logobooks.png" alt="Логотип" width="300" height="300">
+    <img src="images/l.png" alt="Логотип" align="left">
+    <img src="images/logobooks.png" alt="Логотип" align="center">
+    <img src="images/r.png" alt="Логотип" align="right">
 </header>
 <div class="container">
     <h2 align="center">Регистрация</h2>
-    <form action="Registration.php" method="post">
+    <form action="Registration.php" method="post" name="registrationForm" onsubmit="return validateForm()">
         <div class="order-panel">
-            <label for="login">Ваш логин: </label><br>
+            <label for="login">Ваш логин (ник): </label><br>
             <input type="text" value="<?php echo @$login; ?>" name="login" size="20" step="any" required><br><br>
             <label for="pass">Ваш пароль: </label><br>
             <input type="password" value="<?php echo @$pass; ?>" name="pass" size="20" step="any" required><br><br>
@@ -133,10 +137,12 @@
             <input type="text" value="<?php echo @$patronymic; ?>" name="patronymic" size="20" step="any" required><br><br>
             <label for="age">Возраст:</label><br>
             <input type="text" value="<?php echo @$age; ?>" name="age" size="20" step="any" required><br><br>
-            <label for="address">Адрес (страна, город, улица, номер дома):</label><br>
+            <label for="address">Адрес:</label><br>
             <input type="text" value="<?php echo @$address; ?>" name="address" size="20" step="any"><br><br>
             <label for="email">Ваша эл. почта: </label><br>
             <input type="email" value="<?php echo @$email; ?>" name="email" size="20" step="any" required><br><br>
+            <label for="email">Телефон: </label><br>
+            <input type="tel" value="<?php echo @$tel; ?>" name="tel" size="20" step="any" required><br><br>
             <input type="submit" class="btn" value="Зарегистрироваться"><br><br>
             <div align="center">
             <input type="reset" class="btn btn-default" value="Очистить данные">
@@ -147,7 +153,7 @@
         </div>
     </form>
     <?php
-        $dbuser = 'mysql';//mysql
+        $dbuser = 'mysql';
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';
@@ -157,7 +163,7 @@
         if(trim($login) == ''){
             $errors[]= 'Введите логин!';
         }
-        $r = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `имя_пользователя`= '$login'");
+        $r = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `пароль`= '$login'");
 
         if(mysqli_num_rows($r) > 0) {
             $errors[]= 'Данный логин уже зарегистрирован!';
@@ -188,10 +194,16 @@
         if(mysqli_num_rows($e) > 0) {
             $errors[]= 'Данная эл. почта уже зарегистрирована!';
         }
+
+        if(trim($tel) == ''){
+            $errors[]= 'Введите номер телефона!';
+        } elseif (!preg_match('/^\+7\d{10}$/', $tel)) {
+            $errors[]= 'Номер телефона должен быть в формате +7XXXXXXXXXX (11 цифр)!';
+        }
         
-        if(isset($login) && isset($pass) && isset($pass2) && isset($surname) && isset($name) && isset($patronymic) && isset($age) && isset($email) && isset($address)){
+        if(isset($login) && isset($pass) && isset($pass2) && isset($surname) && isset($name) && isset($patronymic) && isset($age) && isset($email) && isset($address) && isset($tel)){
             if(empty($errors)){
-                $query1 = mysqli_query($mysql, "INSERT INTO `пользователи`(имя, фамилия, отчество, возраст, адрес, электронная_почта, пароль, имя_пользователя) 
+                $query1 = mysqli_query($mysql, "INSERT INTO `пользователи`(фамилия, имя, отчество, возраст, адрес, электронная_почта, телефон, пароль, ник_пользователя) 
                 values ('$name','$surname','$patronymic','$age','$address','$email','$pass','$login')");
                 echo '<div style="color: green;"> Вы успешно зарегистрированы!<br>
                 Можете перейти на <a href="Entry.php">страницу авторизации!</a></div><hr>';
@@ -201,6 +213,17 @@
         }
         mysqli_close($mysql);
     ?>
+    <script>
+    function validateForm() {
+        var tel = document.forms["registrationForm"]["tel"].value;
+        var telPattern = /^\+7\d{10}$/;
+        if (!telPattern.test(tel)) {
+            alert("Номер телефона должен быть в формате +7XXXXXXXXXX (11 цифр)!");
+            return false;
+        }
+        return true;
+    }
+    </script>
 </div>
 <footer>
     <p>Контактная информация:</p>

@@ -22,8 +22,9 @@
         text-align: center;
     }
     header img {
-        max-width: 100%;
-        height: auto;
+        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
+        width: auto; /* Ширина будет автоматически подстраиваться */
+        margin: 0 10px; /* Добавляем отступы между изображениями */
     }
     .container {
         max-width: 1200px;
@@ -94,7 +95,9 @@
 </head>
 <body>
 <header>
-    <img src="images/logobooks.png" alt="Логотип" width="300" height="300"/>
+    <img src="images/l.png" alt="Логотип" align="left">
+    <img src="images/logobooks.png" alt="Логотип" align="center">
+    <img src="images/r.png" alt="Логотип" align="right">
 </header>
 <div class="container">
     <h2 align="center">Все отзывы:</h2>
@@ -105,15 +108,16 @@
     $dbname = 'book';
     $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
     or die ('Ошибка ' . mysqli_error($mysql));
-    $query1 = mysqli_query($mysql, "SELECT s.Имя, k.Комментарий, k.Дата FROM комментарии k INNER JOIN сотрудники s ON k.Сотрудник_ID = s.ID Order by k.Дата desc");
+    $query1 = mysqli_query($mysql, "SELECT k.отзыв_id, s.имя, k.оценка, k.комментарий, k.дата_создания FROM отзывы k INNER JOIN пользователи s ON k.пользователь_id = s.пользователь_id Order by k.дата_создания desc");
 
     while($row=mysqli_fetch_array($query1))
     {
         echo " 
         <div class='news-item'>
-            <h2 align='left'>" .  $row['Имя'] . "</h2>
-            <p align='center'>" . $row['Комментарий'] . "</p>
-            <h5 align='right'> Дата написания: " . $row['Дата'] . "</h5>  
+            <h2 align='left'>" .  $row['имя'] . "</h2>
+            <h2 align='left'> Оценка: " .  $row['оценка'] . "</h2>
+            <p align='center'>" . $row['комментарий'] . "</p>
+            <h5 align='right'> Дата написания: " . $row['дата_создания'] . "</h5>  
         </div>
         ";
     }

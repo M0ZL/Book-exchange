@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['пользователь_id'])) {
+    echo "<script>location.replace('Entry.php');</script>"; // Перенаправляем на страницу входа, если пользователь не авторизован
+    exit();
+}
+
+$user_id = $_SESSION['пользователь_id'];
 ?>
 
 <!DOCTYPE html>
@@ -7,7 +14,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Полный список книг для обмена</title>
+    <title>Мои книги</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -107,57 +114,66 @@ session_start();
         <img src="images/r.png" alt="Логотип" align="right">
     </header>
     <div class="container">
-            Полный список книг для обмена:
+            Мои книги для обмена:
         </h2>
         <form action='' method='POST'>
         <table class="tbl">
-            <?php
+        <?php
             $dbuser = 'mysql';
             $dbpass = 'mysql';
             $dbserver = 'localhost';
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления FROM книги k INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id");
 
-            $count = 0; // Счетчик для отслеживания количества ячеек в строке
-            $cellsPerRow = 3; // Количество ячеек в одной строке
+            // Проверяем, авторизован ли пользователь
+            if (isset($_SESSION['пользователь_id'])) {
+                $user_id = $_SESSION['пользователь_id'];
 
-            echo "<tr>"; // Начинаем первую строку
+                // Изменяем запрос, чтобы выбирать книги только для текущего пользователя
+                $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления 
+                                                FROM книги k 
+                                                INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id 
+                                                WHERE k.пользователь_id = $user_id");
 
-            while ($row = mysqli_fetch_array($query1)) {
-                if ($count % $cellsPerRow == 0 && $count != 0) {
-                    echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
+                $count = 0; // Счетчик для отслеживания количества ячеек в строке
+                $cellsPerRow = 3; // Количество ячеек в одной строке
+
+                echo "<tr>"; // Начинаем первую строку
+
+                while ($row = mysqli_fetch_array($query1)) {
+                    if ($count % $cellsPerRow == 0 && $count != 0) {
+                        echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
+                    }
+
+                    echo "<td><b>" . $row['название'] . "</b><br><br>";
+                    echo "<img src='{$row['фото']}' alt='{$row['название']}' class='book-image'><br>";
+                    echo "ISBN: " . $row['isbn'] . "<br>";
+                    echo "Автор: " . $row['автор'] . "<br>";
+                    echo "Жанр: " . $row['жанр'] . "<br>";
+                    echo "Год издания: " . $row['год_издания'] . "<br>";
+                    echo "Статус: " . $row['статус'] . "<br>";
+                    echo "Дата добавления: " . $row['дата_добавления'] . "<br>";
+                    echo "Пользователь, добавивший книгу: " . $row['имя'] . "<br>";
+                    echo "</td>";
+
+                    $count++;
                 }
 
-                echo "<td><b>" . $row['название'] . "</b><br><br>";
-                echo "<img src='{$row['фото']}' alt='{$row['название']}' class='book-image'><br>";
-                echo "ISBN: " . $row['isbn'] . "<br>";
-                echo "Автор: " . $row['автор'] . "<br>";
-                echo "Жанр: " . $row['жанр'] . "<br>";
-                echo "Год издания: " . $row['год_издания'] . "<br>";
-                echo "Статус: " . $row['статус'] . "<br>";
-                echo "Дата добавления: " . $row['дата_добавления'] . "<br>";
-                echo "Пользователь, добавивший книгу: " . $row['имя'] . "<br>";
-                echo "</td>";
+                // Если количество книг не кратно $cellsPerRow, добавляем пустые ячейки для завершения строки
+                while ($count % $cellsPerRow != 0) {
+                    echo "<td></td>";
+                    $count++;
+                }
 
-                $count++;
+                echo "</tr>"; // Закрываем последнюю строку
+            } else {
+                echo "<tr><td colspan='$cellsPerRow'>Пожалуйста, войдите в систему, чтобы увидеть свои книги.</td></tr>";
             }
-
-            // Если количество книг не кратно $cellsPerRow, добавляем пустые ячейки для завершения строки
-            while ($count % $cellsPerRow != 0) {
-                echo "<td></td>";
-                $count++;
-            }
-
-            echo "</tr>"; // Закрываем последнюю строку
 
             mysqli_close($mysql);
             ?>
         </table>
-        <div align="center">
-            <a href="SubmitRequest.php" class="btn">Оформление заявки</a><br><br>
-        </div>
             <?php
             $dbuser = 'mysql';
             $dbpass = 'mysql';
@@ -165,7 +181,7 @@ session_start();
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-                if(!empty($_SESSION['acc_user'])){
+                if(!empty($_SESSION['пользователь_id'])){
                     echo "<p align=center><a href = 'AddProduct.php'>Добавить новую книгу</a><br><br>
                     <a href = 'EditProduct.php'>Редактировать данные о книгах</a><br>";
                     echo "<form action='Products.php'  method='post'><div align=center> 
@@ -188,14 +204,14 @@ session_start();
                     </tr>
                     </table>
                     <div align='center'><input type='submit' class= 'btn btn-primary' style='width:210px' name='delete'
-                    value='Удалить данные о книге'></div>
+                    value='Удалить данные о книге'><br><br></div>
                     </div></form>";
                 }
             mysqli_close($mysql);
             ?>
         </form>
         <div align="center">
-            <a href="index.php" class="btn">На главную страницу</a>
+            <a href="Profile.php" class="btn">Назад</a>
         </div>
     </div>
     <footer>
