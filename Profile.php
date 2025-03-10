@@ -64,7 +64,7 @@
     <h2>Профиль</h2>
     <form action="Profile.php" method="post">
     <?php
-        $dbuser = 'mysql';
+        $dbuser = 'root';
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';

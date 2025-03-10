@@ -175,14 +175,14 @@ $user_id = $_SESSION['пользователь_id'];
             ?>
         </table>
             <?php
-            $dbuser = 'mysql';
+            $dbuser = 'root';
             $dbpass = 'mysql';
             $dbserver = 'localhost';
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
                 if(!empty($_SESSION['пользователь_id'])){
-                    echo "<p align=center><a href = 'AddProduct.php'>Добавить новую книгу</a><br><br>
+                    echo "<p align=center><a href = 'addBook.php'>Добавить новую книгу</a><br><br>
                     <a href = 'EditProduct.php'>Редактировать данные о книгах</a><br>";
                     echo "<form action='Products.php'  method='post'><div align=center> 
                     <table>
