@@ -36,23 +36,43 @@ mysqli_close($mysql);
 <meta content="charset=utf-8">
 <title>Авторизация</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
+    html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    body {
+        font-family: Arial, sans-serif;
         background-color: #f4f4f4;
         color: #333;
+        flex: 1;
     }
     header {
         background-color: #333;
         color: #fff;
-        padding: 20px 0;
+        padding: 10px 0;
         text-align: center;
+        display: flex;
+        justify-content: space-between; /* Распределяем пространство между изображениями */
+        align-items: center; /* Центрируем изображения по вертикали */
+        flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
     }
     header img {
-        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
-        width: auto; /* Ширина будет автоматически подстраиваться */
-        margin: 0 10px; /* Добавляем отступы между изображениями */
+        max-height: 200px; /* Ограничиваем высоту изображений */
+        width: auto; /* Ширина подстраивается автоматически */
+        flex: 0 0 auto; /* Запрещаем изображениям растягиваться или сжиматься */
+    }
+    @media (max-width: 768px) {
+        header img {
+            flex: 1 1 45%;
+        }
+    }
+    @media (max-width: 480px) {
+        header img {
+            flex: 1 1 100%;
+        }
     }
     .container {
         max-width: 1200px;
@@ -60,6 +80,8 @@ mysqli_close($mysql);
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex: 1;
+        padding: 20px 30px 15px 15px; /* Отступы: верх, право, низ, лево */
     }
     .btn {
         display: inline-block;
@@ -114,20 +136,33 @@ mysqli_close($mysql);
     .btn-link:hover {
         color: #555;
     }
+    .form-actions {
+        display: flex;
+        flex-direction: column; /* Располагаем кнопки вертикально */
+        align-items: center; /* Центрируем кнопки по горизонтали */
+        gap: 10px; /* Отступ между кнопками */
+        margin-top: 30px; /* Отступ сверху перед кнопками */
+        margin-left: 15px; /* Отступ слева перед кнопками */
+    }
+
+    .form-actions .btn {
+        width: 200px; /* Фиксированная ширина кнопок */
+        text-align: center; /* Центрируем текст внутри кнопок */
+    }
     footer {
         text-align: center;
         padding: 20px;
         background-color: #333;
         color: #fff;
-        margin-top: 20px;
+        margin-top: auto; /* Прижимаем footer к низу */
     }
 </style>
 </head>
 <body>
 <header>
-    <img src="images/l.png" alt="Логотип" align="left">
-    <img src="images/logobooks.png" alt="Логотип" align="center">
-    <img src="images/r.png" alt="Логотип" align="right">
+    <img src="images/l.png" alt="Логотип">
+    <img src="images/logobooks.png" alt="Логотип">
+    <img src="images/r.png" alt="Логотип">
 </header>
 <div class="container">
     <h2 align="center">Войти</h2>
@@ -140,11 +175,9 @@ mysqli_close($mysql);
             <label for="pass">Ваш пароль:</label>
             <input type="password" name="pass" value="<?php echo @$pass; ?>" required>
         </div>
-        <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Войти"><br><br>
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Войти">
             <input type="reset" class="btn btn-default" value="Очистить данные">
-        </div>
-        <div align="center">
             <a href="index.php" class="btn">На главную страницу</a>
         </div>
     </form>

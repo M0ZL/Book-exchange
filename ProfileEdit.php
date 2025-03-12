@@ -19,23 +19,43 @@
 <meta content="charset=utf-8">
 <title>Редактирование профиля</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
+    html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    body {
+        font-family: Arial, sans-serif;
         background-color: #f4f4f4;
         color: #333;
+        flex: 1;
     }
     header {
         background-color: #333;
         color: #fff;
-        padding: 20px 0;
+        padding: 10px 0;
         text-align: center;
+        display: flex;
+        justify-content: space-between; /* Распределяем пространство между изображениями */
+        align-items: center; /* Центрируем изображения по вертикали */
+        flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
     }
     header img {
-        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
-        width: auto; /* Ширина будет автоматически подстраиваться */
-        margin: 0 10px; /* Добавляем отступы между изображениями */
+        max-height: 200px; /* Ограничиваем высоту изображений */
+        width: auto; /* Ширина подстраивается автоматически */
+        flex: 0 0 auto; /* Запрещаем изображениям растягиваться или сжиматься */
+    }
+    @media (max-width: 768px) {
+        header img {
+            flex: 1 1 45%;
+        }
+    }
+    @media (max-width: 480px) {
+        header img {
+            flex: 1 1 100%;
+        }
     }
     .container {
         max-width: 1200px;
@@ -43,6 +63,7 @@
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex: 1;
     }
     .btn {
         display: inline-block;
@@ -61,7 +82,7 @@
         padding: 20px;
         background-color: #333;
         color: #fff;
-        margin-top: 20px;
+        margin-top: auto; /* Прижимаем footer к низу */
     }
     .error {
         color: red;
@@ -75,9 +96,9 @@
 </head>
 <body>
 <header>
-    <img src="images/l.png" alt="Логотип" align="left">
-    <img src="images/logobooks.png" alt="Логотип" align="center">
-    <img src="images/r.png" alt="Логотип" align="right">
+    <img src="images/l.png" alt="Логотип">
+    <img src="images/logobooks.png">
+    <img src="images/r.png" alt="Логотип">
     <h1>Редактирование профиля</h1>
 </header>
 
@@ -123,6 +144,7 @@
         mysqli_close($mysql);
     ?>
     <div align="center">
+        <a href="Profile.php" class="btn">Назад</a><br><br>
         <a href="index.php" class="btn">На главную страницу</a><br><br>
         <p style="color: red;">Для обновления данных на странице «Профиль» необходимо перезайти!</p>
         <a href="Logout.php" class="btn">Выйти из аккаунта</a></br></br>

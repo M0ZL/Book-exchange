@@ -10,7 +10,7 @@
     $address = $_POST['address'];
    // $nickname = $_POST['nickname'];
     $email = $_POST['email'];
-    $tel = $_POST['tel'];    
+    $tel = $_POST['tel'];
 ?>
 
 <!DOCTYPE HTML>
@@ -19,23 +19,43 @@
 <meta content="charset=utf-8">
 <title>Регистрация</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
+    html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    body {
+        font-family: Arial, sans-serif;
         background-color: #f4f4f4;
         color: #333;
+        flex: 1;
     }
     header {
         background-color: #333;
         color: #fff;
-        padding: 20px 0;
+        padding: 10px 0;
         text-align: center;
+        display: flex;
+        justify-content: space-between; /* Распределяем пространство между изображениями */
+        align-items: center; /* Центрируем изображения по вертикали */
+        flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
     }
     header img {
-        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
-        width: auto; /* Ширина будет автоматически подстраиваться */
-        margin: 0 10px; /* Добавляем отступы между изображениями */
+        max-height: 200px; /* Ограничиваем высоту изображений */
+        width: auto; /* Ширина подстраивается автоматически */
+        flex: 0 0 auto; /* Запрещаем изображениям растягиваться или сжиматься */
+    }
+    @media (max-width: 768px) {
+        header img {
+            flex: 1 1 45%;
+        }
+    }
+    @media (max-width: 480px) {
+        header img {
+            flex: 1 1 100%;
+        }
     }
     .container {
         max-width: 1200px;
@@ -43,6 +63,7 @@
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex: 1;
     }
     .tbl {
         width: 100%;
@@ -84,6 +105,7 @@
         padding: 15px;
         border-radius: 5px;
         margin-bottom: 20px;
+        padding: 15px 27px 15px 15px; /* Отступы: верх, право, низ, лево */
     }
     .order-panel input[type="text"], .order-panel input[type="number"] {
         width: 98%;
@@ -109,20 +131,20 @@
         padding: 20px;
         background-color: #333;
         color: #fff;
-        margin-top: 20px;
+        margin-top: auto; /* Прижимаем footer к низу */
     }
 </style>
 </head>
 <body>
 <header>
-    <img src="images/l.png" alt="Логотип" align="left">
-    <img src="images/logobooks.png" alt="Логотип" align="center">
-    <img src="images/r.png" alt="Логотип" align="right">
+    <img src="images/l.png" alt="Логотип">
+    <img src="images/logobooks.png" alt="Логотип">
+    <img src="images/r.png" alt="Логотип">
 </header>
 <div class="container">
     <h2 align="center">Регистрация</h2>
-    <form action="Registration.php" method="post" name="registrationForm" onsubmit="return validateForm()">
-        <div class="order-panel">
+    <form action="Registration.php" method="post" name="registrationForm" id="registrationForm" onsubmit="return validateForm()">
+        <div class="order-panel" id="formContainer">
             <label for="login">Ваш логин (ник): </label><br>
             <input type="text" value="<?php echo @$login; ?>" name="login" size="20" step="any" required><br><br>
             <label for="pass">Ваш пароль: </label><br>
@@ -159,70 +181,117 @@
         $dbname = 'book';
         $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
         or die ('Ошибка ' . mysqli_error($mysql));
-        $errors =  array();
-        if(trim($login) == ''){
-            $errors[]= 'Введите логин!';
-        }
-        $r = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `пароль`= '$login'");
-
-        if(mysqli_num_rows($r) > 0) {
-            $errors[]= 'Данный логин уже зарегистрирован!';
-        }
-        if($pass == ''){
-            $errors[]= 'Введите пароль!';
-        }
-        if($pass2 != $pass){
-            $errors[]= 'Повторный пароль введен неверно!';
-        }
-        if(trim($surname) == ''){
-            $errors[]= 'Введите фамилию!';
-        }
-        if(trim($name) == ''){
-            $errors[]= 'Введите имя!';
-        }
-        if(trim($patronymic) == ''){
-            $errors[]= 'Введите отчество!';
-        }
-        if(trim($age) == ''){
-            $errors[]= 'Введите возраст!';
-        }
-        if(trim($email) == ''){
-            $errors[]= 'Введите эл. почту!';
-        }
-        $e = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `электронная_почта`= '$email'");
-
-        if(mysqli_num_rows($e) > 0) {
-            $errors[]= 'Данная эл. почта уже зарегистрирована!';
-        }
-
-        if(trim($tel) == ''){
-            $errors[]= 'Введите номер телефона!';
-        } elseif (!preg_match('/^\+7\d{10}$/', $tel)) {
-            $errors[]= 'Номер телефона должен быть в формате +7XXXXXXXXXX (11 цифр)!';
+        
+        $errors = [];
+        
+        if (trim($login) == '') {
+            $errors[] = 'Введите логин (ник)!';
         }
         
-        if(isset($login) && isset($pass) && isset($pass2) && isset($surname) && isset($name) && isset($patronymic) && isset($age) && isset($email) && isset($address) && isset($tel)){
-            if(empty($errors)){
-                $query1 = mysqli_query($mysql, "INSERT INTO `пользователи`(фамилия, имя, отчество, возраст, адрес, электронная_почта, телефон, пароль, ник_пользователя) 
-                values ('$name','$surname','$patronymic','$age','$address','$email','$pass','$login')");
-                echo '<div style="color: green;"> Вы успешно зарегистрированы!<br>
-                Можете перейти на <a href="Entry.php">страницу авторизации!</a></div><hr>';
-            } else{
-                echo '<div style="color: red;">'. array_shift($errors) .'</div><hr>';
+        $r = mysqli_query($mysql, "SELECT * FROM `пользователи` WHERE `ник_пользователя` = '$login'");
+        if (mysqli_num_rows($r) > 0) {
+            $errors[] = 'Данный логин уже зарегистрирован!';
+        }
+        
+        if ($pass == '') {
+            $errors[] = 'Введите пароль!';
+        }
+        
+        if ($pass2 != $pass) {
+            $errors[] = 'Повторный пароль введен неверно!';
+        }
+        
+        if (trim($surname) == '') {
+            $errors[] = 'Введите фамилию!';
+        }
+        
+        if (trim($name) == '') {
+            $errors[] = 'Введите имя!';
+        }
+        
+        if (trim($patronymic) == '') {
+            $errors[] = 'Введите отчество!';
+        }
+        
+        if (trim($age) == '') {
+            $errors[] = 'Введите возраст!';
+        }
+        
+        if (trim($email) == '') {
+            $errors[] = 'Введите эл. почту!';
+        }
+        
+        $e = mysqli_query($mysql, "SELECT * FROM `пользователи` WHERE `электронная_почта` = '$email'");
+        if (mysqli_num_rows($e) > 0) {
+            $errors[] = 'Данная эл. почта уже зарегистрирована!';
+        }
+        
+        if (trim($tel) == '') {
+            $errors[] = 'Введите номер телефона!';
+        } elseif (!preg_match('/^\+79\d{9}$/', $tel)) {
+            $errors[] = 'Номер телефона должен быть в формате +79XXXXXXXXX (11 цифр)!';
+        }
+        
+        if (!empty($_POST)) {
+            if (empty($errors)) {
+                $query1 = mysqli_query($mysql, "INSERT INTO `пользователи` (фамилия, имя, отчество, возраст, адрес, электронная_почта, телефон, роль, пароль, ник_пользователя) 
+                    VALUES ('$surname', '$name', '$patronymic', '$age', '$address', '$email', '$tel', 'участник', '$pass', '$login')");
+        
+                if ($query1) {
+                    echo '<div id="formContainer" style="color: green;"> Вы успешно зарегистрированы!<br>
+                    Можете перейти на <a href="Entry.php">страницу авторизации!</a></div><hr>';
+                } else {
+                    echo '<div id="formContainer" style="color: red;">Ошибка при регистрации: ' . mysqli_error($mysql) . '</div><hr>';
+                }
+            } else {
+                foreach ($errors as $error) {
+                    echo '<div style="color: red;">' . $error . '</div>';
+                }
             }
         }
+        
+        $login = mysqli_real_escape_string($mysql, $_POST['login']);
+        $pass = mysqli_real_escape_string($mysql, $_POST['pass']);
+        $pass2 = mysqli_real_escape_string($mysql, $_POST['pass2']);
+        $surname = mysqli_real_escape_string($mysql, $_POST['surname']);
+        $name = mysqli_real_escape_string($mysql, $_POST['name']);
+        $patronymic = mysqli_real_escape_string($mysql, $_POST['patronymic']);
+        $age = mysqli_real_escape_string($mysql, $_POST['age']);
+        $address = mysqli_real_escape_string($mysql, $_POST['address']);
+        $email = mysqli_real_escape_string($mysql, $_POST['email']);
+        $tel = mysqli_real_escape_string($mysql, $_POST['tel']);
+        
         mysqli_close($mysql);
     ?>
     <script>
     function validateForm() {
         var tel = document.forms["registrationForm"]["tel"].value;
-        var telPattern = /^\+7\d{10}$/;
+        var telPattern = /^\+79\d{9}$/;
         if (!telPattern.test(tel)) {
-            alert("Номер телефона должен быть в формате +7XXXXXXXXXX (11 цифр)!");
+            alert("Номер телефона должен быть в формате +79XXXXXXXXX (11 цифр)!");
             return false;
         }
-        return true;
-    }
+
+        var form = document.getElementById('registrationForm');
+        var formData = new FormData(form);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Обновляем содержимое контейнера
+                document.getElementById('formContainer').innerHTML = xhr.responseText;
+            } else {
+                alert('Произошла ошибка при отправке формы.');
+            }
+        };
+        xhr.onerror = function () {
+            alert('Произошла ошибка при отправке формы.');
+        };
+        xhr.send(formData);
+
+        return false; 
+        }
     </script>
 </div>
 <footer>

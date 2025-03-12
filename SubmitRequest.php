@@ -1,26 +1,72 @@
+<?php
+session_start(); // Запускаем сессию
+
+// Подключение к базе данных
+$dbuser = 'mysql';
+$dbpass = 'mysql';
+$dbserver = 'localhost';
+$dbname = 'book';
+$mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+or die ('Ошибка ' . mysqli_error($mysql));
+
+$user_id = $_SESSION['пользователь_id'];
+
+// Получаем данные о текущем пользователе
+$query = mysqli_query($mysql, "SELECT * FROM пользователи WHERE пользователь_id = $user_id");
+$user = mysqli_fetch_assoc($query);
+
+// Получаем список всех книг, кроме тех, которые добавлены текущим пользователем
+$queryAllBooks = mysqli_query($mysql, "SELECT * FROM книги WHERE пользователь_id != $user_id");
+$allBooks = mysqli_fetch_all($queryAllBooks, MYSQLI_ASSOC);
+
+// Получаем список книг текущего пользователя
+$queryUserBooks = mysqli_query($mysql, "SELECT * FROM книги WHERE пользователь_id = $user_id");
+$userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Обмен книгами</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        body {
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             color: #333;
+            flex: 1;
         }
         header {
             background-color: #333;
             color: #fff;
-            padding: 20px 0;
+            padding: 10px 0;
             text-align: center;
+            display: flex;
+            justify-content: space-between; /* Распределяем пространство между изображениями */
+            align-items: center; /* Центрируем изображения по вертикали */
+            flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
         }
         header img {
-            height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
-            width: auto; /* Ширина будет автоматически подстраиваться */
-            margin: 0 10px; /* Добавляем отступы между изображениями */
+            max-height: 200px; /* Ограничиваем высоту изображений */
+            width: auto; /* Ширина подстраивается автоматически */
+            flex: 0 0 auto; /* Запрещаем изображениям растягиваться или сжиматься */
+        }
+        @media (max-width: 768px) {
+            header img {
+                flex: 1 1 45%;
+            }
+        }
+        @media (max-width: 480px) {
+            header img {
+                flex: 1 1 100%;
+            }
         }
         .container {
             max-width: 1200px;
@@ -28,6 +74,7 @@
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
         }
         .tbl {
             width: 100%;
@@ -85,104 +132,130 @@
             padding: 20px;
             background-color: #333;
             color: #fff;
-            margin-top: 20px;
+            margin-top: auto; /* Прижимаем footer к низу */
         }
     </style>
 </head>
 <body>
     <header>
-        <img src="images/l.png" alt="Логотип" align="left">
-        <img src="images/logobooks.png" alt="Логотип" align="center">
-        <img src="images/r.png" alt="Логотип" align="right">
+        <img src="images/l.png" alt="Логотип">
+        <img src="images/logobooks.png" alt="Логотип">
+        <img src="images/r.png" alt="Логотип">
     </header>
     <div class="container">
         <h1>Создание заявки на обмен книгами</h1>
 
+        <script>
+            function validateForm() {
+                const bookId = document.getElementById('bookId').value;
+                const userBookId = document.getElementById('userBookId').value;
+                const userName = document.getElementById('userName').value;
+                const userEmail = document.getElementById('userEmail').value;
+                const userPhone = document.getElementById('userPhone').value;
+
+                if (bookId.trim() === "") {
+                    alert("Пожалуйста, выберите книгу для обмена.");
+                    return false;
+                }
+
+                if (userBookId.trim() === "") {
+                    alert("Пожалуйста, выберите свою книгу для обмена.");
+                    return false;
+                }
+
+                if (userName.trim() === "") {
+                    alert("Пожалуйста, введите ваше имя.");
+                    return false;
+                }
+
+                if (!validateEmail(userEmail)) {
+                    alert("Пожалуйста, введите корректный email.");
+                    return false;
+                }
+
+                if (!validatePhone(userPhone)) {
+                    alert("Пожалуйста, введите корректный номер телефона.");
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(String(email).toLowerCase());
+            }
+
+            function validatePhone(phone) {
+                const re = /^\+79\d{9}$/; // Проверяет формат +7, затем 9, и еще 9 цифр
+                return re.test(String(phone));
+            }
+        </script>
+
         <?php
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Получаем данные из формы
-            $bookTitle = htmlspecialchars($_POST['bookTitle']);
-            $author = htmlspecialchars($_POST['author']);
-            $userName = htmlspecialchars($_POST['userName']);
-            $userEmail = htmlspecialchars($_POST['userEmail']);
-            $userPhone = htmlspecialchars($_POST['userPhone']);
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                // Получаем данные из формы
+                $bookId = htmlspecialchars($_POST['bookId']);
+                $userBookId = htmlspecialchars($_POST['userBookId']);
+                $userName = htmlspecialchars($_POST['userName']);
+                $userEmail = htmlspecialchars($_POST['userEmail']);
+                $userPhone = htmlspecialchars($_POST['userPhone']);
 
-            // Здесь можно добавить код для сохранения данных в базу данных или отправки по email
+                // Вставка заявки в таблицу `заявки_на_обмен` с текущей датой
+                    $query = "INSERT INTO заявки_на_обмен (пользователь_id, книга_id, параметры_поиска, статус, дата_создания) 
+                    VALUES ($user_id, $bookId, 'Обмен книги $userBookId на книгу $bookId', 'ожидание', NOW())";
+                if (mysqli_query($mysql, $query)) {
+                    // Получаем ID последней вставленной заявки
+                    $заявка_id = mysqli_insert_id($mysql);
 
-            // Выводим сообщение об успешной отправке
-            echo "<div class='alert-success'>Спасибо, $userName! Ваша заявка на обмен книги '$bookTitle' принята.</div>";
-        }
+                    // Генерация случайного трек-номера из 14 цифр
+                    $трек_номер = mt_rand(10000000000000, 99999999999999);
+
+                    // Вставка данных в таблицу `обмены` с текущей датой
+                    $query = "INSERT INTO обмены (заявка_id, предложенная_книга_id, трек_номер, статус, дата_создания) 
+                            VALUES ($заявка_id, $userBookId, '$трек_номер', 'ожидание', NOW())";
+                    if (mysqli_query($mysql, $query)) {
+                        echo "<div class='alert-success'>Спасибо, $userName! Ваша заявка на обмен книги принята. Трек-номер: $трек_номер</div>";
+                    } else {
+                        echo "<div class='alert-error'>Ошибка: " . mysqli_error($mysql) . "</div>";
+                    }
+                }
+            }
         ?>
-
-<script>
-function validateForm() {
-    const bookTitle = document.getElementById('bookTitle').value;
-    const author = document.getElementById('author').value;
-    const userName = document.getElementById('userName').value;
-    const userEmail = document.getElementById('userEmail').value;
-    const userPhone = document.getElementById('userPhone').value;
-
-    if (bookTitle.trim() === "") {
-        alert("Пожалуйста, введите название книги.");
-        return false;
-    }
-
-    if (author.trim() === "") {
-        alert("Пожалуйста, введите автора книги.");
-        return false;
-    }
-
-    if (userName.trim() === "") {
-        alert("Пожалуйста, введите ваше имя.");
-        return false;
-    }
-
-    if (!validateEmail(userEmail)) {
-        alert("Пожалуйста, введите корректный email.");
-        return false;
-    }
-
-    if (!validatePhone(userPhone)) {
-        alert("Пожалуйста, введите корректный номер телефона.");
-        return false;
-    }
-
-    return true;
-}
-
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-}
-
-function validatePhone(phone) {
-    const re = /\+7\s?[\(]{0,1}9[0-9]{2}[\)]{0,1}\s?\d{3}[-]{0,1}\d{2}[-]{0,1}\d{2}/;
-    return re.test(String(phone));
-}
-</script>
 
         <div class="order-panel">
             <form action="" method="post" onsubmit="return validateForm()">
-                <label for="bookTitle">Название книги:</label>
-                <input type="text" id="bookTitle" name="bookTitle" required>
+                <label for="bookId">Название книги:</label>
+                <select id="bookId" name="bookId" required>
+                    <?php foreach ($allBooks as $book): ?>
+                        <option value="<?= $book['книга_id'] ?>"><?= $book['название'] ?></option>
+                    <?php endforeach; ?>
+                </select><br><br>
 
-                <label for="author">Автор:</label>
-                <input type="text" id="author" name="author" required>
+                <label for="userBookId">Предложите свою книгу:</label>
+                <select id="userBookId" name="userBookId" required>
+                    <?php foreach ($userBooks as $book): ?>
+                        <option value="<?= $book['книга_id'] ?>"><?= $book['название'] ?></option>
+                    <?php endforeach; ?>
+                </select><br><br>
 
                 <label for="userName">Ваше имя:</label>
-                <input type="text" id="userName" name="userName" required>
+                <input type="text" id="userName" name="userName" value="<?= $user['имя'] ?>" required><br><br>
 
                 <label for="userEmail">Ваш email:</label>
-                <input type="email" id="userEmail" name="userEmail" required>
+                <input type="email" id="userEmail" name="userEmail" value="<?= $user['электронная_почта'] ?>" required><br><br>
 
                 <label for="userPhone">Ваш телефон:</label>
-                <input type="tel" id="userPhone" name="userPhone" required><br><br>
+                <input type="tel" id="userPhone" name="userPhone" value="<?= $user['телефон'] ?>" required><br><br>
 
                 <input type="submit" class="btn" value="Отправить заявку">
             </form><br>
             <div align="center">
-            <a href="index.php" class="btn">На главную страницу</a>
-        </div>
+                <a href="Profile.php" class="btn">Назад</a><br><br>
+            </div>
+            <div align="center">
+                <a href="index.php" class="btn">На главную страницу</a>
+            </div>
         </div>
     </div>
     <footer>

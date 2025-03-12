@@ -8,23 +8,43 @@
 <meta content="charset=utf-8">
 <title>Профиль</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
+    html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    body {
+        font-family: Arial, sans-serif;
         background-color: #f4f4f4;
         color: #333;
+        flex: 1;
     }
     header {
         background-color: #333;
         color: #fff;
-        padding: 20px 0;
+        padding: 10px 0;
         text-align: center;
+        display: flex;
+        justify-content: space-between; /* Распределяем пространство между изображениями */
+        align-items: center; /* Центрируем изображения по вертикали */
+        flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
     }
     header img {
-        height: 300px; /* Устанавливаем одинаковую высоту для всех изображений */
-        width: auto; /* Ширина будет автоматически подстраиваться */
-        margin: 0 10px; /* Добавляем отступы между изображениями */
+        max-height: 200px; /* Ограничиваем высоту изображений */
+        width: auto; /* Ширина подстраивается автоматически */
+        flex: 0 0 auto; /* Запрещаем изображениям растягиваться или сжиматься */
+    }
+    @media (max-width: 768px) {
+        header img {
+            flex: 1 1 45%;
+        }
+    }
+    @media (max-width: 480px) {
+        header img {
+            flex: 1 1 100%;
+        }
     }
     .container {
         max-width: 1200px;
@@ -32,6 +52,7 @@
         padding: 20px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex: 1;
     }
     .btn {
         display: inline-block;
@@ -50,21 +71,21 @@
         padding: 20px;
         background-color: #333;
         color: #fff;
-        margin-top: 20px;
+        margin-top: auto; /* Прижимаем footer к низу */
     }
 </style>
 </head>
 <body>
 <header>
-    <img src="images/l.png" alt="Логотип" align="left">
-    <img src="images/logobooks.png" alt="Логотип" align="center">
-    <img src="images/r.png" alt="Логотип" align="right">
+    <img src="images/l.png" alt="Логотип">
+    <img src="images/logobooks.png" alt="Логотип">
+    <img src="images/r.png" alt="Логотип">
 </header>
 <div class='container'>
     <h2>Профиль</h2>
     <form action="Profile.php" method="post">
     <?php
-        $dbuser = 'root';
+        $dbuser = 'mysql';
         $dbpass = 'mysql';
         $dbserver = 'localhost';
         $dbname = 'book';
@@ -86,7 +107,9 @@
             echo "<div><input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
             <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
             <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
-            <a href='MyBooks.php' class='btn'>Мои книги</a></br>
+            <a href='MyBooks.php' class='btn'>Мои книги</a>
+            <a href='SubmitRequest.php' class='btn'>Создать заявку на обмен</a>
+            <a href='MyExchanges.php' class='btn'>Мои обмены</a></br>
             <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
         }
         mysqli_close($mysql);
