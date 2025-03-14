@@ -7,6 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <title>Полный список книг для обмена</title>
     <style>
         html, body {
@@ -119,6 +120,24 @@ session_start();
             color: #fff;
             margin-top: auto; /* Прижимаем footer к низу */
         }
+        .fixed-gif {
+            position: fixed;
+            right: 40px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 150px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
+        .fixed-gif1 {
+            position: fixed;
+            left: 0px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 220px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
     </style>
 </head>
 <body>
@@ -127,6 +146,8 @@ session_start();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
+    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+    <img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
     <div class="container">
             Полный список книг для обмена:
         </h2>

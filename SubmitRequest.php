@@ -28,7 +28,8 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Обмен книгами</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
+    <title>Создание заявки на обмен книгами</title>
     <style>
         html, body {
             height: 100%;
@@ -134,6 +135,24 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
             color: #fff;
             margin-top: auto; /* Прижимаем footer к низу */
         }
+        .fixed-gif {
+            position: fixed;
+            right: 40px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 150px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
+        .fixed-gif1 {
+            position: fixed;
+            left: 0px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 220px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
     </style>
 </head>
 <body>
@@ -142,6 +161,8 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
+    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+    <img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
     <div class="container">
         <h1>Создание заявки на обмен книгами</h1>
 
@@ -215,7 +236,13 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
                     $query = "INSERT INTO обмены (заявка_id, предложенная_книга_id, трек_номер, статус, дата_создания) 
                             VALUES ($заявка_id, $userBookId, '$трек_номер', 'ожидание', NOW())";
                     if (mysqli_query($mysql, $query)) {
-                        echo "<div class='alert-success'>Спасибо, $userName! Ваша заявка на обмен книги принята. Трек-номер: $трек_номер</div>";
+                        // Обновляем рейтинг пользователя
+                        $updateRatingQuery = "UPDATE пользователи SET рейтинг = рейтинг + 1 WHERE пользователь_id = $user_id";
+                        if (mysqli_query($mysql, $updateRatingQuery)) {
+                            echo "<div class='alert-success'>Спасибо, $userName! Ваша заявка на обмен книги принята. Трек-номер: $трек_номер. Ваш рейтинг увеличен на 1 очко.</div>";
+                        } else {
+                            echo "<div class='alert-error'>Ошибка при обновлении рейтинга: " . mysqli_error($mysql) . "</div>";
+                        }
                     } else {
                         echo "<div class='alert-error'>Ошибка: " . mysqli_error($mysql) . "</div>";
                     }

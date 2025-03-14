@@ -8,7 +8,6 @@
     $patronymic = $_POST['patronymic'];
     $age = $_POST['age'];
     $address = $_POST['address'];
-   // $nickname = $_POST['nickname'];
     $email = $_POST['email'];
     $tel = $_POST['tel'];
 ?>
@@ -17,6 +16,7 @@
 <html>
 <head>
 <meta content="charset=utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
 <title>Регистрация</title>
 <style>
     html, body {
@@ -133,6 +133,24 @@
         color: #fff;
         margin-top: auto; /* Прижимаем footer к низу */
     }
+    .fixed-gif {
+        position: fixed;
+        right: 40px;
+        top: 50%; /* Начальная позиция по вертикали */
+        transform: translateY(-50%); /* Центрирование по вертикали */
+        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+        width: 150px; /* Ширина гифки */
+        height: auto; /* Высота подстраивается автоматически */
+    }
+    .fixed-gif1 {
+        position: fixed;
+        left: 0px;
+        top: 50%; /* Начальная позиция по вертикали */
+        transform: translateY(-50%); /* Центрирование по вертикали */
+        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+        width: 220px; /* Ширина гифки */
+        height: auto; /* Высота подстраивается автоматически */
+    }
 </style>
 </head>
 <body>
@@ -141,6 +159,8 @@
     <img src="images/logobooks.png" alt="Логотип">
     <img src="images/r.png" alt="Логотип">
 </header>
+<img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+<img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
 <div class="container">
     <h2 align="center">Регистрация</h2>
     <form action="Registration.php" method="post" name="registrationForm" id="registrationForm" onsubmit="return validateForm()">
@@ -156,7 +176,7 @@
             <label for="name">Имя: </label><br>
             <input type="text" value="<?php echo @$name; ?>" name="name" size="20" step="any" required><br><br>
             <label for="patronymic">Отчество: </label><br>
-            <input type="text" value="<?php echo @$patronymic; ?>" name="patronymic" size="20" step="any" required><br><br>
+            <input type="text" value="<?php echo @$patronymic; ?>" name="patronymic" size="20" step="any"><br><br>
             <label for="age">Возраст:</label><br>
             <input type="text" value="<?php echo @$age; ?>" name="age" size="20" step="any" required><br><br>
             <label for="address">Адрес:</label><br>
@@ -234,10 +254,13 @@
         
         if (!empty($_POST)) {
             if (empty($errors)) {
-                $query1 = mysqli_query($mysql, "INSERT INTO `пользователи` (фамилия, имя, отчество, возраст, адрес, электронная_почта, телефон, роль, пароль, ник_пользователя) 
-                    VALUES ('$surname', '$name', '$patronymic', '$age', '$address', '$email', '$tel', 'участник', '$pass', '$login')");
+                // Используем подготовленные выражения для безопасности
+                $query = $mysql->prepare("INSERT INTO `пользователи` (фамилия, имя, отчество, возраст, адрес, электронная_почта, телефон, роль, пароль, ник_пользователя) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'участник', ?, ?)");
+                $query->bind_param("sssisssss", $surname, $name, $patronymic, $age, $address, $email, $tel, $pass, $login);
+                $query->execute();
         
-                if ($query1) {
+                if ($query) {
                     echo '<div id="formContainer" style="color: green;"> Вы успешно зарегистрированы!<br>
                     Можете перейти на <a href="Entry.php">страницу авторизации!</a></div><hr>';
                 } else {
