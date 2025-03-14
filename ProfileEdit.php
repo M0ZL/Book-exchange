@@ -9,14 +9,26 @@
     $patronymic = $_POST['patronymic'];
     $age = $_POST['age'];
     $address = $_POST['address'];
-    $nickname = $_POST['nickname'];
-    $email = $_POST['email']; 
+    //$nickname = $_POST['nickname'];
+    $email = $_POST['email'];
+    $tel = $_POST['tel'];
+
+    $dbuser = 'mysql';
+    $dbpass = 'mysql';
+    $dbserver = 'localhost';
+    $dbname = 'book';
+    $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+    or die ('Ошибка ' . mysqli_error($mysql));
+
+    $id = $_SESSION['пользователь_id'];        
+    
 ?>
 
 <!DOCTYPE HTML>
 <html>
 <head>
 <meta content="charset=utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
 <title>Редактирование профиля</title>
 <style>
     html, body {
@@ -92,6 +104,24 @@
         color: green;
         margin-bottom: 10px;
     }
+    .fixed-gif {
+        position: fixed;
+        right: 40px;
+        top: 50%; /* Начальная позиция по вертикали */
+        transform: translateY(-50%); /* Центрирование по вертикали */
+        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+        width: 150px; /* Ширина гифки */
+        height: auto; /* Высота подстраивается автоматически */
+    }
+    .fixed-gif1 {
+        position: fixed;
+        left: 0px;
+        top: 50%; /* Начальная позиция по вертикали */
+        transform: translateY(-50%); /* Центрирование по вертикали */
+        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+        width: 220px; /* Ширина гифки */
+        height: auto; /* Высота подстраивается автоматически */
+    }
 </style>
 </head>
 <body>
@@ -99,24 +129,29 @@
     <img src="images/l.png" alt="Логотип">
     <img src="images/logobooks.png">
     <img src="images/r.png" alt="Логотип">
-    <h1>Редактирование профиля</h1>
 </header>
-
+<img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+<img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
 <div class="container">
+<h1 align = "center">Редактирование профиля</h1>
     <?php
-        $dbuser = 'mysql';
-        $dbpass = 'mysql';
-        $dbserver = 'localhost';
-        $dbname = 'book';
-        $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
-        or die ('Ошибка ' . mysqli_error($mysql));
+        // Запрос для получения роли пользователя
+        $query = "SELECT роль FROM пользователи WHERE пользователь_id = '$id'";
+        $result = mysqli_query($mysql, $query) or die(mysqli_error($mysql));
+
+        if ($user = mysqli_fetch_assoc($result)) {
+            $_SESSION['роль'] = $user['роль']; // Сохраняем роль в сессии
+        }
+
         $errors =  array();
         if(isset($_SESSION['log_user'])){
+            echo "<h3>Вы вошли как: " . $_SESSION['роль'] . "</h3>"; // Отображаем роль пользователя
             echo "<p>" . $_SESSION['log_user'] . "</p>";
+            
            
             if(isset($login) && isset($pass) && isset($pass2) && isset($pass3) && isset($surname) && isset($name) && isset($patronymic) 
-            && isset($age) && isset($address) && isset($email)){
-                $p = mysqli_query($mysql,"SELECT * FROM `users` WHERE `password`= '$pass'");
+            && isset($age) && isset($address) && isset($email) && isset($tel)){
+                $p = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `пароль`= '$pass'");
 
                 if(mysqli_num_rows($p) == 0) {
                     $errors[]= 'Текущий пароль введен неверно!';
@@ -129,12 +164,25 @@
                         $errors[]= 'Подтвержденный пароль введен неверно!';
                     }
                 }
-                
             
                 if(empty($errors)){
-                    $query1 = mysqli_query($mysql, "UPDATE `users` SET last_name = '$surname', first_name = '$name', middle_name = '$patronymic', age = '$age', 
-                    email = '$email', login ='$login', password = '$pass2', address = '$address' Where password = '$pass'");
-                    echo '<div class="success">Вы успешно отредактировали свои данные!</div><hr>';
+                    $query1 = mysqli_query($mysql, "UPDATE `пользователи` SET 
+                        `фамилия` = '$surname', 
+                        `имя` = '$name', 
+                        `отчество` = '$patronymic', 
+                        `возраст` = '$age', 
+                        `электронная_почта` = '$email', 
+                        `ник_пользователя` = '$login', 
+                        `пароль` = '$pass2', 
+                        `адрес` = '$address', 
+                        `телефон` = '$tel', 
+                        WHERE `пароль` = '$pass'");
+                    
+                    if($query1) {
+                        echo '<div class="success">Вы успешно отредактировали свои данные!</div><hr>';
+                    } else {
+                        echo '<div class="error">Ошибка при обновлении данных!</div><hr>';
+                    }
                 } else{
                     echo '<div class="error">'. array_shift($errors) .'</div><hr>';
                 }

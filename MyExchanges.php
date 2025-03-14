@@ -18,23 +18,24 @@
     // Получаем ID пользователя из сессии
     $user_id = $_SESSION['пользователь_id'];
 
-    // Запрос к базе данных для получения информации об обменах
+    // Запрос к базе данных для получения информации об обменах с названиями книг
     $query = "
         SELECT 
-            o.обмен_id, 
-            o.заявка_id, 
-            o.предложенная_книга_id, 
             o.трек_номер, 
             o.статус AS статус_обмена, 
-            o.дата_создания AS дата_обмена,
-            z.пользователь_id, 
-            z.книга_id, 
+            o.дата_создания AS дата_создания_обмена,
             z.статус AS статус_заявки, 
-            z.дата_создания AS дата_заявки
+            z.дата_создания AS дата_создания_заявки,
+            k1.название AS выбранная_книга,
+            k2.название AS предложенная_книга
         FROM 
             обмены o
         INNER JOIN 
             заявки_на_обмен z ON o.заявка_id = z.заявка_id
+        INNER JOIN
+            книги k1 ON z.книга_id = k1.книга_id
+        INNER JOIN
+            книги k2 ON o.предложенная_книга_id = k2.книга_id
         WHERE 
             z.пользователь_id = $user_id
     ";
@@ -49,6 +50,7 @@
 <html>
 <head>
 <meta content="charset=utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
 <title>Мои обмены</title>
 <style>
     html, body {
@@ -116,20 +118,36 @@
         color: #fff;
         margin-top: auto; /* Прижимаем footer к низу */
     }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    table, th, td {
+    .exchange-item {
         border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
     }
-    th, td {
-        padding: 8px;
-        text-align: left;
+    .exchange-item h3 {
+        margin-top: 0;
     }
-    th {
-        background-color: #f2f2f2;
+    .exchange-item p {
+        margin: 5px 0;
+    }
+    .fixed-gif {
+        position: fixed;
+        right: 40px;
+        top: 50%; /* Начальная позиция по вертикали */
+        transform: translateY(-50%); /* Центрирование по вертикали */
+        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+        width: 150px; /* Ширина гифки */
+        height: auto; /* Высота подстраивается автоматически */
+    }
+    .fixed-gif1 {
+        position: fixed;
+        left: 0px;
+        top: 50%; /* Начальная позиция по вертикали */
+        transform: translateY(-50%); /* Центрирование по вертикали */
+        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+        width: 220px; /* Ширина гифки */
+        height: auto; /* Высота подстраивается автоматически */
     }
 </style>
 </head>
@@ -139,35 +157,23 @@
     <img src="images/logobooks.png" alt="Логотип">
     <img src="images/r.png" alt="Логотип">
 </header>
+<img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+<img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
 <div class='container'>
     <h2>Мои обмены</h2>
     <?php
     if (mysqli_num_rows($result) > 0) {
-        echo "<table>
-                <tr>
-                    <th>ID обмена</th>
-                    <th>ID заявки</th>
-                    <th>ID предложенной книги</th>
-                    <th>Трек-номер</th>
-                    <th>Статус обмена</th>
-                    <th>Дата обмена</th>
-                    <th>Статус заявки</th>
-                    <th>Дата заявки</th>
-                </tr>";
-        // Выводим данные каждой строки
         while($row = mysqli_fetch_assoc($result)) {
-            echo "<tr>
-                    <td>" . $row["обмен_id"]. "</td>
-                    <td>" . $row["заявка_id"]. "</td>
-                    <td>" . $row["предложенная_книга_id"]. "</td>
-                    <td>" . $row["трек_номер"]. "</td>
-                    <td>" . $row["статус_обмена"]. "</td>
-                    <td>" . $row["дата_обмена"]. "</td>
-                    <td>" . $row["статус_заявки"]. "</td>
-                    <td>" . $row["дата_заявки"]. "</td>
-                  </tr>";
+            echo "<div class='exchange-item'>
+                    <h3>Обмен: Трек номер: " . $row["трек_номер"] . "</h3>
+                    <p><strong>Статус обмена:</strong> " . $row["статус_обмена"] . "</p>
+                    <p><strong>Дата создания обмена:</strong> " . $row["дата_создания_обмена"] . "</p>
+                    <p><strong>Статус заявки:</strong> " . $row["статус_заявки"] . "</p>
+                    <p><strong>Дата создания заявки:</strong> " . $row["дата_создания_заявки"] . "</p>
+                    <p><strong>Выбранная книга:</strong> " . $row["выбранная_книга"] . "</p>
+                    <p><strong>Предложенная вами книга:</strong> " . $row["предложенная_книга"] . "</p>
+                  </div>";
         }
-        echo "</table>";
     } else {
         echo "У вас пока нет обменов.";
     }

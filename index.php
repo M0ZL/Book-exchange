@@ -8,6 +8,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <title>Главная страница</title>
     <style type="text/css">
         html, body {
@@ -190,6 +191,24 @@ session_start();
         .news-item h2, .news-item p, .news-item h5 {
             margin: 5px 0;
         }
+        .fixed-gif {
+            position: fixed;
+            right: 40px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 150px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
+        .fixed-gif1 {
+            position: fixed;
+            left: 0px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 220px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
     </style>
 </head>
 <body>
@@ -198,6 +217,8 @@ session_start();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header><br>
+    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+    <img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
     <?php
         if(isset($_SESSION['logged_user'])){
             echo '
@@ -301,6 +322,7 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
                 echo "Статус: " . $row['статус'] . "<br>";
                 echo "Дата добавления: " . $row['дата_добавления'] . "<br>";
                 echo "Пользователь, добавивший книгу: " . $row['имя'] . "<br>";
+                echo "<a href='UserProfile.php?user_id=" . $row['пользователь_id'] . "'>" . $row['имя'] . "</a>";
                 echo "</td>";
 
                 $count++;
