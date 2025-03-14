@@ -2,7 +2,7 @@
 session_start();
 
 // Подключение к базе данных
-$dbuser = 'root';
+$dbuser = 'mysql';
 $dbpass = 'mysql';
 $dbserver = 'localhost';
 $dbname = 'book';
@@ -29,7 +29,7 @@ if (isset($_GET['delete'])) {
 
 // Получение списка пользователей
 $users = [];
-$result = mysqli_query($mysql, "SELECT * FROM `users`");
+$result = mysqli_query($mysql, "SELECT * FROM `пользователи`");
 if ($result) {
     while ($row = mysqli_fetch_assoc($result)) {
         $users[] = $row;
@@ -37,6 +37,29 @@ if ($result) {
 } else {
     echo 'Ошибка при получении данных: ' . mysqli_error($mysql);
 }
+
+
+mysqli_close($mysql);
+$mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+or die ('Ошибка ' . mysqli_error($mysql));
+
+// Получаем данные о жалобах
+$query = "
+    SELECT 
+        j.жалоба_id,
+        j.описание,
+        u1.ник_пользователя AS жалобщик,
+        u2.ник_пользователя AS жалобный,
+        j.дата_создания
+    FROM 
+        жалобы j
+    JOIN 
+        пользователи u1 ON j.пользователь_id = u1.пользователь_id
+    JOIN 
+        пользователи u2 ON j.жалоба_на = u2.пользователь_id
+";
+$result = mysqli_query($mysql, $query);
+$complaints = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 mysqli_close($mysql);
 ?>
@@ -48,6 +71,10 @@ mysqli_close($mysql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель администратора</title>
     <style>
+        .admin-info {
+            font-size: 16px;
+            color: #333;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -140,6 +167,36 @@ mysqli_close($mysql);
         }
     </style>
     <script>
+    function changeStatus(userId, currentStatus) {
+        // Определяем новый статус
+        const newStatus = currentStatus === 'активный' ? 'бан' : 'активный';
+
+        // Отправляем AJAX-запрос
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "change_status.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Обновляем статус на странице
+                const statusElement = document.querySelector(`tr td span.status[data-id="${userId}"]`);
+                if (statusElement) {
+                    statusElement.textContent = newStatus;
+                    // Обновляем текст кнопки
+                    const button = statusElement.nextElementSibling;
+                    button.textContent = newStatus === 'активный' ? 'Забанить' : 'Разбанить';
+                }
+            }
+        };
+        xhr.send("user_id=" + userId + "&new_status=" + newStatus);
+    }
+    </script>
+    <script>
+        // function changeStatus(userId, currentStatus) {
+        //     const newStatus = currentStatus === 'активный' ? 'бан' : 'активный';
+        //     if (confirm(`Вы действительно хотите изменить статус пользователя на "${newStatus}"?`)) {
+                
+        //     }
+        // }
         // Функция для отображения соответствующей секции
         function showSection(section) {
             const sections = document.querySelectorAll('.section');
@@ -163,7 +220,16 @@ mysqli_close($mysql);
     </script>
 </head>
 <body>
-    <h1>Панель администратора</h1>
+<div class="header">
+        <h1>Панель администратора</h1>
+        <div class="admin-info">
+            <?php if (isset($_SESSION['admin_full_name'])): ?>
+                <span><?= htmlspecialchars($_SESSION['admin_full_name']) ?></span>
+                <a href="logout.php" class="logout">Выйти</a>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <ul class="nav-list">
         <li onclick="showSection('current-exchanges')">Текущие обмены</li>
         <li onclick="showSection('user-list')">Список всех пользователей</li>
@@ -183,20 +249,26 @@ mysqli_close($mysql);
                     <th>Возраст</th>
                     <th>Адрес</th>
                     <th>Логин</th>
-                    <th>Действия</th>
+                    <th>Статус</th>
+                    
                 </tr>
             </thead>
             <tbody>
             <?php foreach ($users as $user): ?>
                 <tr>
-                    <td><?= htmlspecialchars($user['id']) ?></td>
-                    <td><?= htmlspecialchars($user['first_name']) ?></td>
-                    <td><?= htmlspecialchars($user['last_name']) ?></td>
-                    <td><?= htmlspecialchars($user['email']) ?></td>
-                    <td><?= htmlspecialchars($user['age']) ?></td>
-                    <td><?= htmlspecialchars($user['address']) ?></td>
-                    <td><?= htmlspecialchars($user['login']) ?></td>
-                    <td><span class="delete-btn" onclick="confirmDelete(<?= $user['id'] ?>)">Удалить</span></td>
+                    <td><?= htmlspecialchars($user['пользователь_id']) ?></td>
+                    <td><?= htmlspecialchars($user['имя']) ?></td>
+                    <td><?= htmlspecialchars($user['фамилия']) ?></td>
+                    <td><?= htmlspecialchars($user['электронная_почта']) ?></td>
+                    <td><?= htmlspecialchars($user['возраст']) ?></td>
+                    <td><?= htmlspecialchars($user['адрес']) ?></td>
+                    <td><?= htmlspecialchars($user['ник_пользователя']) ?></td>
+                    <td>
+                        <span class="status"><?= htmlspecialchars($user['статус']) ?></span>
+                        <button onclick="changeStatus(<?= $user['пользователь_id'] ?>, '<?= $user['статус'] ?>')">
+                            <?= $user['статус'] === 'активный' ? 'Забанить' : 'Разбанить' ?>
+                        </button>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -215,9 +287,29 @@ mysqli_close($mysql);
 
     <div id="reports" class="section">
         <h2>Раздел с репортами</h2>
-        <p>Отчёты будут отображены здесь.</p>
+        <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Жалобщик (ID, Ник)</th>
+                <th>Жалобный (ID, Ник)</th>
+                <th>Описание жалобы</th>
+                <th>Дата создания</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($complaints as $complaint): ?>
+                <tr>
+                    <td><?= htmlspecialchars($complaint['жалоба_id']) ?></td>
+                    <td><?= htmlspecialchars($complaint['жалобщик']) ?> (<?= htmlspecialchars($complaint['пользователь_id']) ?>)</td>
+                    <td><?= htmlspecialchars($complaint['жалобный']) ?> (<?= htmlspecialchars($complaint['жалоба_на']) ?>)</td>
+                    <td><?= htmlspecialchars($complaint['описание']) ?></td>
+                    <td><?= htmlspecialchars($complaint['дата_создания']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
     </div>
 
-    <a href="logout.php" class="logout">Выйти</a>
 </body>
 </html>

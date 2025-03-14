@@ -1,18 +1,36 @@
 <?php
 session_start();
-// Пример фиксированных логина и пароля для администратора
-$admin_username = 'admin';
-$admin_password = 'password123'; 
+
+$dbuser = 'mysql';
+$dbpass = 'mysql';
+$dbserver = 'localhost';
+$dbname = 'book';
+$mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+or die ('Ошибка ' . mysqli_error($mysql));
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Проверка логина и пароля
-    if ($username === $admin_username && $password === $admin_password) {
-        $_SESSION['admin_logged_in'] = true;
-        header('Location: admin.php');
-        exit();
+    // Экранирование входных данных для предотвращения SQL-инъекций
+    $username = mysqli_real_escape_string($mysql, $username);
+    $password = mysqli_real_escape_string($mysql, $password);
+
+    // Запрос для проверки пользователя
+    $query = "SELECT `фамилия`, `имя`, `отчество`,`роль` FROM пользователи WHERE электронная_почта = '$username' AND пароль = '$password'";
+    $result = mysqli_query($mysql, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $user = mysqli_fetch_assoc($result);
+        // Проверка роли пользователя
+        if ($user['роль'] === 'администратор') {
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_full_name'] = $user['фамилия'] . ' ' . $user['имя'] . ' ' . $user['отчество'];
+            header('Location: index.php');
+            exit();
+        } else {
+            $error = "У вас нет прав администратора.";
+        }
     } else {
         $error = "Неверный логин или пароль.";
     }
@@ -87,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>Вход администратора</h2>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
         <form method="POST" action="login.php">
-            <input type="text" name="username" id="username" placeholder="Логин" required>
+            <input type="text" name="username" id="username" placeholder="Электронная почта" required>
             <input type="password" name="password" id="password" placeholder="Пароль" required>
             <input type="submit" value="Войти">
         </form>
