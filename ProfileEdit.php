@@ -13,15 +13,17 @@
     $email = $_POST['email'];
     $tel = $_POST['tel'];
 
-    $dbuser = 'mysql';
-    $dbpass = 'mysql';
-    $dbserver = 'localhost';
-    $dbname = 'book';
-    $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
-    or die ('Ошибка ' . mysqli_error($mysql));
-
-    $id = $_SESSION['пользователь_id'];        
+    if (isset($_POST['pass2']) && $_POST['pass2'] === $_POST['pass3']) {
     
+        // Обновляем пароль в сессии
+        $_SESSION['user_pass'] = $pass2;
+    
+        // Обновляем куки, если "Запомнить меня" выбрано
+        if (isset($_SESSION['remember_me']) && $_SESSION['remember_me'] === true) {
+            setcookie('pass', $pass2, time() + 60 * 60 * 24 * 30, '/');
+        }
+    }
+
 ?>
 
 <!DOCTYPE HTML>
@@ -113,15 +115,6 @@
         width: 150px; /* Ширина гифки */
         height: auto; /* Высота подстраивается автоматически */
     }
-    .fixed-gif1 {
-        position: fixed;
-        left: 0px;
-        top: 50%; /* Начальная позиция по вертикали */
-        transform: translateY(-50%); /* Центрирование по вертикали */
-        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
-        width: 220px; /* Ширина гифки */
-        height: auto; /* Высота подстраивается автоматически */
-    }
 </style>
 </head>
 <body>
@@ -131,10 +124,18 @@
     <img src="images/r.png" alt="Логотип">
 </header>
 <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
-<img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
 <div class="container">
 <h1 align = "center">Редактирование профиля</h1>
     <?php
+        $dbuser = 'mysql';
+        $dbpass = 'mysql';
+        $dbserver = 'localhost';
+        $dbname = 'book';
+        $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
+        or die ('Ошибка ' . mysqli_error($mysql));
+    
+        $id = $_SESSION['пользователь_id'];     
+
         // Запрос для получения роли пользователя
         $query = "SELECT роль FROM пользователи WHERE пользователь_id = '$id'";
         $result = mysqli_query($mysql, $query) or die(mysqli_error($mysql));
@@ -151,7 +152,7 @@
            
             if(isset($login) && isset($pass) && isset($pass2) && isset($pass3) && isset($surname) && isset($name) && isset($patronymic) 
             && isset($age) && isset($address) && isset($email) && isset($tel)){
-                $p = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `пароль`= '$pass'");
+                $p = mysqli_query($mysql,"SELECT * FROM `пользователи` WHERE `пользователь_id`= '$id'");
 
                 if(mysqli_num_rows($p) == 0) {
                     $errors[]= 'Текущий пароль введен неверно!';
@@ -175,8 +176,8 @@
                         `ник_пользователя` = '$login', 
                         `пароль` = '$pass2', 
                         `адрес` = '$address', 
-                        `телефон` = '$tel', 
-                        WHERE `пароль` = '$pass'");
+                        `телефон` = '$tel' 
+                        WHERE `пользователь_id`= '$id'");
                     
                     if($query1) {
                         echo '<div class="success">Вы успешно отредактировали свои данные!</div><hr>';

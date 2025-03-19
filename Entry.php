@@ -13,6 +13,45 @@ $dbname = 'book';
 $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
 or die ('Ошибка ' . mysqli_error($mysql));
 
+// Обработка выхода из системы
+if (isset($_GET['logout'])) {
+    // Устанавливаем куки на 30 дней, используя данные из сессии
+    if (isset($_SESSION['logged_user'])) {
+        setcookie('login', $_SESSION['logged_user'], time() + 60 * 60 * 24 * 30, '/');
+        setcookie('pass', $_SESSION['user_pass'], time() + 60 * 60 * 24 * 30, '/'); // Сохраняем пароль из сессии
+        setcookie('last_activity', time(), time() + 60 * 60 * 24 * 30, '/');
+    }
+    session_destroy();
+    header('Location: index.php');
+    exit;
+}
+
+// Проверка, если пользователь не заходил более 7 дней
+if (isset($_COOKIE['last_activity'])) {
+    $lastActivity = $_COOKIE['last_activity'];
+    if (time() - $lastActivity > 60 * 60 * 24 * 7) { // Если прошло более 7 дней
+        setcookie('login', '', time() - 3600, '/');
+        setcookie('pass', '', time() - 3600, '/');
+        setcookie('last_activity', '', time() - 3600, '/');
+    }
+}
+
+// Заполнение полей логина и пароля из куков, если они существуют
+$loginValue = '';
+$passValue = '';
+if (isset($_COOKIE['login']) && isset($_COOKIE['pass']) && isset($_COOKIE['last_activity'])) {
+    $loginValue = $_COOKIE['login'];
+    $passValue = $_COOKIE['pass'];
+}
+
+if (isset($_SESSION['user_pass'])) {
+    // Если пароль был обновлен, обновляем куки
+    if (isset($_COOKIE['pass']) && $_COOKIE['pass'] !== $_SESSION['user_pass']) {
+        setcookie('pass', $_SESSION['user_pass'], time() + 60 * 60 * 24 * 30, '/');
+    }
+}
+
+
 mysqli_close($mysql);
 ?>
 
@@ -20,6 +59,7 @@ mysqli_close($mysql);
 <html>
 <head>
 <meta content="charset=utf-8">
+<link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
 <title>Авторизация</title>
 <style>
     html, body {
@@ -152,16 +192,6 @@ mysqli_close($mysql);
         width: 150px; /* Ширина гифки */
         height: auto; /* Высота подстраивается автоматически */
     }
-    .fixed-gif1 {
-        position: fixed;
-        left: 0px;
-        top: 50%; /* Начальная позиция по вертикали */
-        transform: translateY(-50%); /* Центрирование по вертикали */
-        z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
-        width: 220px; /* Ширина гифки */
-        height: auto; /* Высота подстраивается автоматически */
-    }
-    
     .form-group input[type="checkbox"] {
         margin-right: 10px; /* Отступ между чекбоксом и текстом */
     }
@@ -177,21 +207,20 @@ mysqli_close($mysql);
     <?php endif; ?>
 </header>
 <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
-<img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
 <div class="container">
     <h2 align="center">Войти</h2>
     <form action="Entry.php" method="post">
         <div class="form-group">
             <label for="login">Ваш логин (ник):</label>
-            <input type="text" name="login" value="<?php echo isset($_COOKIE['login']) ? $_COOKIE['login'] : @$login; ?>" required>
+            <input type="text" name="login" value="<?php echo htmlspecialchars($loginValue); ?>" required>
         </div>
         <div class="form-group">
             <label for="pass">Ваш пароль:</label>
-            <input type="password" name="pass" value="<?php echo isset($_COOKIE['pass']) ? $_COOKIE['pass'] : @$pass; ?>" required>
+            <input type="password" name="pass" value="<?php echo htmlspecialchars($passValue); ?>" required>
         </div>
         <div class="form-group">
             <label>
-                Запомнить меня <input type="checkbox" name="remember"> 
+                Запомнить меня <input type="checkbox" name="remember" <?php echo isset($_COOKIE['login']) ? 'checked' : ''; ?>>
             </label>
         </div>
         <div class="form-actions">
@@ -216,16 +245,8 @@ mysqli_close($mysql);
         if(mysqli_num_rows($a) > 0) {
             $_SESSION['logged_user'] = $a;
             echo '<script>location.replace("index.php");</script>';
-            $errors = [];
 
-            // Обработка выхода из системы
-            if (isset($_GET['logout'])) {
-                setcookie('login', '', time() - 3600, '/');
-                setcookie('pass', '', time() - 3600, '/');
-                session_destroy();
-                header('Location: index.php');
-                exit;
-            }
+            $errors = [];
 
             // Обработка формы авторизации
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login']) && isset($_POST['pass'])) {
@@ -250,6 +271,7 @@ mysqli_close($mysql);
                             // Пароль верный
                             $_SESSION['logged_user'] = $user['ник_пользователя'];
                             $_SESSION['пользователь_id'] = $user['пользователь_id'];
+                            $_SESSION['user_pass'] = $user['пароль'];
 
                             // Загружаем данные пользователя в сессию
                             $_SESSION['prof_user'] = "<div>Ник пользователя: " . $user['ник_пользователя'] . "</br></br> Ваш рейтинг: " . $user['рейтинг'] . "</br></br> Дата регистрации: " . $user['дата_регистрации'] . " </br></br> Фамилия: " . $user['фамилия'] . 
@@ -282,10 +304,23 @@ mysqli_close($mysql);
                             <input type='reset' class='btn btn-default' style='width:140px' value='Очистить данные'></div> </div>
                             </form></div>";
 
-                            // Сохранение логина и пароля в cookies, если выбрано "Запомнить меня"
+                            // Запись в сессию, выбрал ли пользователь "Запомнить меня"
+                            if (isset($_POST['remember'])) {
+                                $_SESSION['remember_me'] = true;
+                            } else {
+                                $_SESSION['remember_me'] = false;
+                            }
+                            
+                            // Установка куков, если выбрано "Запомнить меня"
                             if (isset($_POST['remember'])) {
                                 setcookie('login', $login, time() + 60 * 60 * 24 * 30, '/');
                                 setcookie('pass', $pass, time() + 60 * 60 * 24 * 30, '/');
+                                setcookie('last_activity', time(), time() + 60 * 60 * 24 * 30, '/');
+                            }else {
+                                // Удаление куков, если "Запомнить меня" не выбрано
+                                setcookie('login', '', time() - 3600, '/');
+                                setcookie('pass', '', time() - 3600, '/');
+                                setcookie('last_activity', '', time() - 3600, '/');
                             }
 
                             // Перенаправление на главную страницу
@@ -293,7 +328,7 @@ mysqli_close($mysql);
                             exit;
                         } else {
                             // Пароль неверный
-                            $errors[] = 'Неверный логин или пароль! g';
+                            $errors[] = 'Неверный логин или пароль!';
                             // Очистка полей ввода
                             echo '<script>document.querySelector("input[name=\'login\']").value = "";</script>';
                             echo '<script>document.querySelector("input[name=\'pass\']").value = "";</script>';
