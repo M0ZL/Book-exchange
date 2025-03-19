@@ -154,7 +154,18 @@ session_start();
             $dbname = 'book';
             $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
             or die ('Ошибка ' . mysqli_error($mysql));
-            $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления FROM книги k INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id");
+            // Проверяем, авторизован ли пользователь
+            if (isset($_SESSION['пользователь_id'])) {
+                $user_id = $_SESSION['пользователь_id']; // Предположим, что user_id хранится в сессии
+                $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления 
+                                                FROM книги k 
+                                                INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id 
+                                                WHERE k.пользователь_id != $user_id");
+            } else {
+                $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления 
+                                                FROM книги k 
+                                                INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id");
+            }
 
             $count = 0; // Счетчик для отслеживания количества книг
             $cellsPerRow = 3; // Количество ячеек в одной строке
@@ -205,7 +216,12 @@ session_start();
                         echo "Статус: " . $books[$index + $i]['статус'] . "<br>";
                         echo "Дата добавления: " . $books[$index + $i]['дата_добавления'] . "<br>";
                         echo "<a href='UserProfile.php?user_id=" . $books[$index + $i]['пользователь_id'] . "'>" . $books[$index + $i]['имя'] . "</a><br><br>";
-                        echo "<a href='Entry.php' class='btn'>Оформление заявки</a>";
+                        // Проверка, авторизован ли пользователь
+                        if (isset($_SESSION['пользователь_id'])) {
+                            echo "<a href='SubmitRequest.php?book_id=" . $books[$index + $i]['книга_id'] . "' class='btn'>Оформление заявки</a>";
+                        } else {
+                            echo "<a href='Entry.php' class='btn'>Оформление заявки</a>";
+                        }
                         echo "</td>";
                     } else {
                         echo "<td></td>"; // Пустая ячейка, если книг меньше 3
@@ -220,41 +236,6 @@ session_start();
             mysqli_close($mysql);
             ?>
         </table>
-            <?php
-            $dbuser = 'mysql';
-            $dbpass = 'mysql';
-            $dbserver = 'localhost';
-            $dbname = 'book';
-            $mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname) 
-            or die ('Ошибка ' . mysqli_error($mysql));
-                if(!empty($_SESSION['acc_user'])){
-                    echo "<p align=center><a href = 'AddProduct.php'>Добавить новую книгу</a><br><br>
-                    <a href = 'EditProduct.php'>Редактировать данные о книгах</a><br>";
-                    echo "<form action='Products.php'  method='post'><div align=center> 
-                    <table>
-                    <tr>
-                    <td >Список:<br><select class='form-control' name='list' size='1'>";
-                    
-                    $stmt = mysqli_query($mysql, "SELECT * FROM products");
-                    while ($row = mysqli_fetch_array($stmt))
-                        echo '<option value="' . $row["id_product"] . '">' . $row["id_product"] ." ". $row["Name"] ." ". $row["Price"] ." ". $row["Count"] . '</option>';
-                    echo "</select><br><br>";
-                    
-                    $list =$_POST["list"];
-                    if (isset($_POST['delete'])) {
-                        $strSQL2 = mysqli_query($mysql, "DELETE FROM `products` WHERE id_product = $list") 
-                        or die (mysqli_error($mysql));
-                    }
-                    
-                    echo "</td>
-                    </tr>
-                    </table>
-                    <div align='center'><input type='submit' class= 'btn btn-primary' style='width:210px' name='delete'
-                    value='Удалить данные о книге'></div>
-                    </div></form>";
-                }
-            mysqli_close($mysql);
-            ?>
         </form>
         <div align="center">
             <a href="index.php" class="btn">На главную страницу</a>
