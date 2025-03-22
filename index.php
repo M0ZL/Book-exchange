@@ -115,7 +115,7 @@ session_start();
             background-color: #f2f2f2;
         }
         .book-image {
-            width: 40%; /* Уменьшаем ширину изображения до 30% от ширины ячейки */
+            width: 250px; /* Уменьшаем ширину изображения до 250px от ширины ячейки */
             height: auto; /* Высота подстраивается автоматически для сохранения пропорций */
             display: block; /* Убирает лишние отступы вокруг изображения */
             margin: 0 auto; /* Центрирование изображения по горизонтали */
@@ -200,14 +200,9 @@ session_start();
             width: 150px; /* Ширина гифки */
             height: auto; /* Высота подстраивается автоматически */
         }
-        .fixed-gif1 {
-            position: fixed;
-            left: 0px;
-            top: 50%; /* Начальная позиция по вертикали */
-            transform: translateY(-50%); /* Центрирование по вертикали */
-            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
-            width: 220px; /* Ширина гифки */
-            height: auto; /* Высота подстраивается автоматически */
+        .tbl td {
+            text-align: center; /* Выравнивание текста по центру */
+            vertical-align: middle; /* Выравнивание содержимого по вертикали */
         }
     </style>
 </head>
@@ -218,7 +213,6 @@ session_start();
         <img src="images/r.png" alt="Логотип">
     </header><br>
     <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
-    <img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
     <?php
         if(isset($_SESSION['logged_user'])){
             echo '
@@ -298,43 +292,57 @@ setInterval(autoSlide, 5000); // Интервал 5000 мс (5 секунд)
             or die ('Ошибка ' . mysqli_error($mysql));
             $query1 = mysqli_query($mysql, "SELECT p.имя, k.книга_id, k.пользователь_id, k.название, k.isbn, фото, k.автор, k.жанр, k.год_издания, k.статус, k.дата_добавления FROM книги k INNER JOIN пользователи p ON k.пользователь_id = p.пользователь_id");
 
-            $count = 0; // Счетчик для отслеживания количества ячеек в строке
-            $cellsPerRow = 3; // Количество ячеек в одной строке
+            $count = 0; // Счетчик для отслеживания количества книг
             $maxBooks = 3; // Максимальное количество книг для отображения
 
-            echo "<tr>"; // Начинаем первую строку
-
+            echo "<tr>"; // Первая строка для названий книг
             while ($row = mysqli_fetch_array($query1)) {
                 if ($count >= $maxBooks) {
                     break; // Прерываем цикл, если достигли максимального количества книг
                 }
 
-                if ($count % $cellsPerRow == 0 && $count != 0) {
-                    echo "</tr><tr>"; // Закрываем текущую строку и начинаем новую, если достигли нужного количества ячеек
+                echo "<td><b>" . $row['название'] . "</b></td>";
+                $count++;
+            }
+            echo "</tr>";
+
+            // Сбрасываем указатель результата запроса на начало
+            mysqli_data_seek($query1, 0);
+            $count = 0;
+
+            echo "<tr>"; // Вторая строка для фото книг
+            while ($row = mysqli_fetch_array($query1)) {
+                if ($count >= $maxBooks) {
+                    break;
                 }
 
-                echo "<td><b>" . $row['название'] . "</b><br><br>";
-                echo "<img src='{$row['фото']}' alt='{$row['название']}' class='book-image'><br>";
+                echo "<td><img src='{$row['фото']}' alt='{$row['название']}' class='book-image'></td>";
+                $count++;
+            }
+            echo "</tr>";
+
+            // Снова сбрасываем указатель результата запроса на начало
+            mysqli_data_seek($query1, 0);
+            $count = 0;
+
+            echo "<tr>"; // Третья строка для текста
+            while ($row = mysqli_fetch_array($query1)) {
+                if ($count >= $maxBooks) {
+                    break;
+                }
+
+                echo "<td>";
                 echo "ISBN: " . $row['isbn'] . "<br>";
                 echo "Автор: " . $row['автор'] . "<br>";
                 echo "Жанр: " . $row['жанр'] . "<br>";
                 echo "Год издания: " . $row['год_издания'] . "<br>";
                 echo "Статус: " . $row['статус'] . "<br>";
                 echo "Дата добавления: " . $row['дата_добавления'] . "<br>";
-                echo "Пользователь, добавивший книгу: " . $row['имя'] . "<br>";
                 echo "<a href='UserProfile.php?user_id=" . $row['пользователь_id'] . "'>" . $row['имя'] . "</a>";
                 echo "</td>";
-
                 $count++;
             }
-
-            // Если количество книг не кратно $cellsPerRow, добавляем пустые ячейки для завершения строки
-            while ($count % $cellsPerRow != 0 && $count < $maxBooks) {
-                echo "<td></td>";
-                $count++;
-            }
-
-            echo "</tr>"; // Закрываем последнюю строку
+            echo "</tr>";
 
             mysqli_close($mysql);
             ?>

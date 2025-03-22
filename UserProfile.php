@@ -13,6 +13,7 @@ or die ('Ошибка ' . mysqli_error($mysql));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <title>Профиль пользователя</title>
     <style type="text/css">
         html, body {
@@ -116,6 +117,15 @@ or die ('Ошибка ' . mysqli_error($mysql));
             color: #fff;
             margin-top: auto;
         }
+        .fixed-gif {
+            position: fixed;
+            right: 40px;
+            top: 50%; /* Начальная позиция по вертикали */
+            transform: translateY(-50%); /* Центрирование по вертикали */
+            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
+            width: 150px; /* Ширина гифки */
+            height: auto; /* Высота подстраивается автоматически */
+        }
     </style>
 </head>
 <body>
@@ -124,6 +134,7 @@ or die ('Ошибка ' . mysqli_error($mysql));
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
+    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
     <div class="container">
         <?php
         if (isset($_GET['user_id'])) {

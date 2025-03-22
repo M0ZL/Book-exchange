@@ -144,15 +144,6 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
             width: 150px; /* Ширина гифки */
             height: auto; /* Высота подстраивается автоматически */
         }
-        .fixed-gif1 {
-            position: fixed;
-            left: 0px;
-            top: 50%; /* Начальная позиция по вертикали */
-            transform: translateY(-50%); /* Центрирование по вертикали */
-            z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
-            width: 220px; /* Ширина гифки */
-            height: auto; /* Высота подстраивается автоматически */
-        }
     </style>
 </head>
 <body>
@@ -162,7 +153,6 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
         <img src="images/r.png" alt="Логотип">
     </header>
     <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
-    <img src="images/chebyrashka.gif" alt="Анимация" class="fixed-gif1">
     <div class="container">
         <h1>Создание заявки на обмен книгами</h1>
 
