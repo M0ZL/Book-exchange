@@ -1,0 +1,52 @@
+<link rel="stylesheet" type="text/css" href="styles.css">
+// После подтверждения обмена
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirm_exchange'])) {
+    $exchange_id = $_POST['exchange_id'];
+    
+    // Получаем адрес доставки из запроса на обмен
+    $query = "SELECT delivery_address FROM запросы_на_обмен WHERE запрос_id = ?";
+    $stmt = $mysql->prepare($query);
+    $stmt->bind_param("i", $exchange_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $delivery_address = $row['delivery_address'];
+    
+    // Обновляем статус обмена
+    $update_query = "UPDATE предложения_на_обмен SET подтверждение = 1 WHERE предложение_id = ?";
+    $update_stmt = $mysql->prepare($update_query);
+    $update_stmt->bind_param("i", $exchange_id);
+    $update_stmt->execute();
+    
+    // Выводим адрес доставки
+    echo "Адрес доставки: " . $delivery_address;
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirm_delivery'])) {
+    $exchange_id = $_POST['exchange_id'];
+    
+    // Проверяем, подтверждена ли доставка обеими сторонами
+    $query = "SELECT доставка_подтверждена_а, доставка_подтверждена_б FROM предложения_на_обмен WHERE предложение_id = ?";
+    $stmt = $mysql->prepare($query);
+    $stmt->bind_param("i", $exchange_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    
+    if ($row['доставка_подтверждена_а'] && $row['доставка_подтверждена_б']) {
+        // Удаляем запрос на обмен
+        $delete_query = "DELETE FROM запросы_на_обмен WHERE запрос_id = ?";
+        $delete_stmt = $mysql->prepare($delete_query);
+        $delete_stmt->bind_param("i", $exchange_id);
+        $delete_stmt->execute();
+        
+        echo "Обмен завершен, запрос удален.";
+    } else {
+        echo "Ожидаем подтверждения доставки от другой стороны.";
+    }
+ }
+}
+
+//Подключите стили для единообразия.
+//Добавьте отображение адреса доставки после принятия обмена.
+//Убедитесь, что запросы на обмен удаляются после завершения обмена.
+//Проверьте и исправьте другие возможные ошибки.
