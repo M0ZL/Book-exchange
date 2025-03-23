@@ -226,7 +226,7 @@
         <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
         <a href='MyBooks.php' class='btn'>Мои книги</a>
         <a href='SubmitRequest.php' class='btn'>Создать заявку на обмен</a>
-        <a href='MyExchanges.php' class='btn'>Мои обмены</a></br>
+        <a href='my_exchanges.php' class='btn'>Мои обмены</a></br>
         <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
         
         mysqli_close($mysql);

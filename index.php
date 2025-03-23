@@ -217,6 +217,8 @@ session_start();
         if(isset($_SESSION['logged_user'])){
             echo '
             <div align="center">
+                <a href="obmenBook.php" class="btn">Обмен книгами</a>
+                <a href="zayavaNaObmen.php" class="btn">Создать запрос на обмен</a>
                 <a href="Profile.php" class="btn">Личный аккаунт</a>
                 <a href="Logout.php" class="btn">Выйти из аккаунта</a>
             </div>';
