@@ -67,8 +67,8 @@ if ($result->num_rows > 0) {
     }
 
     // Допустимые форматы файла
-    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-        echo "Извините, только JPG, JPEG, PNG & GIF файлы разрешены.";
+    if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" && $imageFileType != "webp") {
+        echo "Извините, только JPG, JPEG, PNG, WEBP & GIF файлы разрешены.";
         $uploadOk = 0;
     }
 

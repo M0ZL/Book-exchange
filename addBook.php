@@ -96,6 +96,14 @@ session_start();
         border-radius: 5px;
         border: 1px solid #ccc;
     }
+    .order-panel select {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+
+    }
     .order-panel input[type="submit"] {
         width: 100%;
         padding: 10px;
@@ -211,9 +219,12 @@ session_start();
             <div class="error" id="isbnError">ISBN должен состоять из 17 символов.</div><br>
 
             <label for="genre">Жанр:</label>
-            <input type="text" id="genre" name="genre" required>
-            <div class="error" id="genreError">Жанр не должен начинаться с цифры.</div><br>
-
+            <select name="genre" id="genre">
+                <option value="Фантастика">Фантастика</option>
+                <option value="Роман">Роман</option>
+                <option value="Мистика">Мистика</option>
+            <option value="Детектив">Детектив</option>
+            </select><br><br>
             <label for="year">Год издания:</label>
             <input type="text" id="year" name="year" required>
             <div class="error" id="yearError">Введите год издания</div><br>

@@ -1,40 +1,53 @@
 <?php
 session_start();
-$offer_id = $_POST['offer_id'];
-$track_number = $_POST['track_number'];
+if (!isset($_SESSION['пользователь_id']) || !isset($_POST['offer_id']) || !isset($_POST['track_number'])) {
+    header("Location: login.php");
+    exit();
+}
 
 // Подключение к базе данных
 $dbuser = 'mysql';
 $dbpass = 'mysql';
 $dbserver = 'localhost';
 $dbname = 'book';
-$mysql = mysqli_connect($dbserver, $dbuser, $dbpass, $dbname);
+$mysql = new mysqli($dbserver, $dbuser, $dbpass, $dbname);
 
-if (!$mysql) {
-    die("Ошибка подключения к базе данных: " . mysqli_connect_error());
+if ($mysql->connect_error) {
+    die("Ошибка подключения: " . $mysql->connect_error);
+}
+$mysql->set_charset("utf8mb4");
+
+$offer_id = $_POST['offer_id'];
+$track_number = trim($_POST['track_number']);
+$user_id = $_SESSION['пользователь_id'];
+
+// Проверяем длину трек-номера
+if (strlen($track_number) < 10) {
+    $mysql->close();
+    die("Трек-номер должен содержать минимум 10 символов");
 }
 
-// Определение, кто вводит трек-номер (сторона А или Б)
-$user_id = $_SESSION['пользователь_id'];
-$query = "SELECT сторона_а, сторона_б FROM предложения_на_обмен WHERE предложение_id = ?";
-$stmt = $mysql->prepare($query);
+// Определяем сторону
+$stmt = $mysql->prepare("SELECT сторона_а FROM предложения_на_обмен WHERE предложение_id = ?");
+if (!$stmt) {
+    $mysql->close();
+    die("Ошибка подготовки запроса: " . $mysql->error);
+}
 $stmt->bind_param("i", $offer_id);
 $stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
+$is_side_a = ($stmt->get_result()->fetch_assoc()['сторона_а'] == $user_id);
 
-if ($row['сторона_а'] == $user_id) {
-    $field = 'трек_номер_а';
-} else {
-    $field = 'трек_номер_б';
+// Обновляем трек-номер
+$field = $is_side_a ? 'трек_номер_а' : 'трек_номер_б';
+$stmt = $mysql->prepare("UPDATE предложения_на_обмен SET $field = ? WHERE предложение_id = ?");
+if (!$stmt) {
+    $mysql->close();
+    die("Ошибка подготовки запроса: " . $mysql->error);
 }
-
-// Обновление трек-номера
-$query = "UPDATE предложения_на_обмен SET $field = ? WHERE предложение_id = ?";
-$stmt = $mysql->prepare($query);
 $stmt->bind_param("si", $track_number, $offer_id);
 $stmt->execute();
 
+$mysql->close();
 header("Location: my_exchanges.php");
 exit();
 ?>

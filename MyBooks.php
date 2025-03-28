@@ -247,29 +247,8 @@ $user_id = $_SESSION['пользователь_id'];
             or die ('Ошибка ' . mysqli_error($mysql));
                 if(!empty($_SESSION['пользователь_id'])){
                     echo "<p align=center><a href = 'addBook.php'>Добавить новую книгу</a><br><br>
-                    <a href = 'EditProduct.php'>Редактировать данные о книгах</a><br>";
-                    echo "<form action='Products.php'  method='post'><div align=center> 
-                    <table>
-                    <tr>
-                    <td >Список:<br><select class='form-control' name='list' size='1'>";
+                    <a href = 'MyBooksEdit.php'>Редактировать данные о книгах</a><br>";
                     
-                    $stmt = mysqli_query($mysql, "SELECT * FROM products");
-                    while ($row = mysqli_fetch_array($stmt))
-                        echo '<option value="' . $row["id_product"] . '">' . $row["id_product"] ." ". $row["Name"] ." ". $row["Price"] ." ". $row["Count"] . '</option>';
-                    echo "</select><br><br>";
-                    
-                    $list =$_POST["list"];
-                    if (isset($_POST['delete'])) {
-                        $strSQL2 = mysqli_query($mysql, "DELETE FROM `products` WHERE id_product = $list") 
-                        or die (mysqli_error($mysql));
-                    }
-                    
-                    echo "</td>
-                    </tr>
-                    </table>
-                    <div align='center'><input type='submit' class= 'btn btn-primary' style='width:210px' name='delete'
-                    value='Удалить данные о книге'><br><br></div>
-                    </div></form>";
                 }
             mysqli_close($mysql);
             ?>

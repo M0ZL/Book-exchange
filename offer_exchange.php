@@ -31,16 +31,21 @@ $result = $stmt->get_result();
 <body>
     <h1>Предложить обмен</h1>
     <form method="POST" action="process_exchange.php">
-        <input type="hidden" name="request_id" value="<?= $request_id ?>">
-        
-        <label for="book_id">Выберите книгу для обмена:</label>
+    <input type="hidden" name="request_id" value="<?= $request_id ?>">
+    
+    <label for="book_id">Выберите книгу для обмена:</label>
+    <?php if ($result->num_rows > 0): ?>
         <select name="book_id" id="book_id" required>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <option value="<?= $row['книга_id'] ?>"><?= $row['название'] ?></option>
             <?php endwhile; ?>
         </select><br>
-
         <button type="submit">Предложить обмен</button>
-    </form>
-</body>
+    <?php else: ?>
+        <select name="book_id" id="book_id" disabled>
+            <option>Нет книг для обмена</option>
+        </select><br>
+        <button type="submit" disabled>Предложить обмен</button>
+    <?php endif; ?>
+</form>
 </html>

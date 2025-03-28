@@ -17,8 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $desired_genre = $_POST['desired_genre'];
     $desired_condition = $_POST['desired_condition'];
     $desired_other = $_POST['desired_other'];
-    $delivery_address = $_POST['delivery_address'];
-    $recipient_name = $_POST['recipient_name'];
     $user_id = $_SESSION['пользователь_id']; // ID пользователя из сессии
 
     // Проверка существования книги
@@ -34,17 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Вставка данных в таблицу запросов на обмен
     $query = "INSERT INTO запросы_на_обмен (
-        offered_book_id, desired_genre, desired_condition, desired_other, delivery_address, recipient_name, пользователь_id
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        offered_book_id, desired_genre, desired_condition, desired_other, пользователь_id
+    ) VALUES (?, ?, ?, ?, ?)";
     $stmt = $mysql->prepare($query);
     $stmt->bind_param(
-        "isssssi", 
+        "isssi", 
         $offered_book_id, 
         $desired_genre, 
         $desired_condition, 
         $desired_other, 
-        $delivery_address, 
-        $recipient_name, 
         $user_id
     );
 

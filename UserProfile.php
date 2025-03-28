@@ -93,7 +93,7 @@ or die ('Ошибка ' . mysqli_error($mysql));
             background-color: #f2f2f2;
         }
         .book-image {
-            width: 40%;
+            width: 250px;
             height: auto;
             display: block;
             margin: 0 auto;
@@ -126,6 +126,10 @@ or die ('Ошибка ' . mysqli_error($mysql));
             width: 150px; /* Ширина гифки */
             height: auto; /* Высота подстраивается автоматически */
         }
+        .tbl td {
+            text-align: center; /* Выравнивание текста по центру */
+            vertical-align: middle; /* Выравнивание содержимого по вертикали */
+        }
     </style>
 </head>
 <body>
@@ -152,29 +156,67 @@ or die ('Ошибка ' . mysqli_error($mysql));
                 $books_query = mysqli_query($mysql, "SELECT * FROM книги WHERE пользователь_id = $user_id");
                 echo "<h2>Книги, выставленные пользователем:</h2>";
                 echo "<table class='tbl'>";
-                echo "<tr>";
+
+                // Счетчик для отслеживания количества книг
                 $count = 0;
-                $cellsPerRow = 3;
+                $cellsPerRow = 3; // Количество ячеек в одной строке
+
+                // Массив для хранения данных о книгах
+                $books = [];
                 while ($book = mysqli_fetch_array($books_query)) {
-                    if ($count % $cellsPerRow == 0 && $count != 0) {
-                        echo "</tr><tr>";
+                    $books[] = $book;
+                }
+
+                // Переменная для отслеживания текущей позиции в массиве книг
+                $index = 0;
+                $totalBooks = count($books);
+
+                // Цикл для обработки книг блоками по 3
+                while ($index < $totalBooks) {
+                    // Первая строка: названия книг
+                    echo "<tr>";
+                    for ($i = 0; $i < $cellsPerRow; $i++) {
+                        if ($index + $i < $totalBooks) {
+                            echo "<td><b>" . $books[$index + $i]['название'] . "</b></td>";
+                        } else {
+                            echo "<td></td>"; // Пустая ячейка, если книг меньше 3
+                        }
                     }
-                    echo "<td><b>" . $book['название'] . "</b><br><br>";
-                    echo "<img src='{$book['фото']}' alt='{$book['название']}' class='book-image'><br>";
-                    echo "ISBN: " . $book['isbn'] . "<br>";
-                    echo "Автор: " . $book['автор'] . "<br>";
-                    echo "Жанр: " . $book['жанр'] . "<br>";
-                    echo "Год издания: " . $book['год_издания'] . "<br>";
-                    echo "Статус: " . $book['статус'] . "<br>";
-                    echo "Дата добавления: " . $book['дата_добавления'] . "<br>";
-                    echo "</td>";
-                    $count++;
+                    echo "</tr>";
+
+                    // Вторая строка: фото книг
+                    echo "<tr>";
+                    for ($i = 0; $i < $cellsPerRow; $i++) {
+                        if ($index + $i < $totalBooks) {
+                            echo "<td><img src='{$books[$index + $i]['фото']}' alt='{$books[$index + $i]['название']}' class='book-image'></td>";
+                        } else {
+                            echo "<td></td>"; // Пустая ячейка, если книг меньше 3
+                        }
+                    }
+                    echo "</tr>";
+
+                    // Третья строка: текст о книгах
+                    echo "<tr>";
+                    for ($i = 0; $i < $cellsPerRow; $i++) {
+                        if ($index + $i < $totalBooks) {
+                            echo "<td>";
+                            echo "ISBN: " . $books[$index + $i]['isbn'] . "<br>";
+                            echo "Автор: " . $books[$index + $i]['автор'] . "<br>";
+                            echo "Жанр: " . $books[$index + $i]['жанр'] . "<br>";
+                            echo "Год издания: " . $books[$index + $i]['год_издания'] . "<br>";
+                            echo "Статус: " . $books[$index + $i]['статус'] . "<br>";
+                            echo "Дата добавления: " . $books[$index + $i]['дата_добавления'] . "<br>";
+                            echo "</td>";
+                        } else {
+                            echo "<td></td>"; // Пустая ячейка, если книг меньше 3
+                        }
+                    }
+                    echo "</tr>";
+
+                    // Увеличиваем индекс на количество обработанных книг
+                    $index += $cellsPerRow;
                 }
-                while ($count % $cellsPerRow != 0) {
-                    echo "<td></td>";
-                    $count++;
-                }
-                echo "</tr>";
+
                 echo "</table>";
 
                 // Кнопка "Подать жалобу"
@@ -192,6 +234,9 @@ or die ('Ошибка ' . mysqli_error($mysql));
         }
         mysqli_close($mysql);
         ?>
+        <div align="center">
+            <a href="index.php" class="btn">Назад</a>
+        </div>
     </div>
     <footer>
         <p>Контактная информация:</p>

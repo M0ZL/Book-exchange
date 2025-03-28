@@ -218,7 +218,7 @@ session_start();
                         echo "<a href='UserProfile.php?user_id=" . $books[$index + $i]['пользователь_id'] . "'>" . $books[$index + $i]['имя'] . "</a><br><br>";
                         // Проверка, авторизован ли пользователь
                         if (isset($_SESSION['пользователь_id'])) {
-                            echo "<a href='SubmitRequest.php?book_id=" . $books[$index + $i]['книга_id'] . "' class='btn'>Оформление заявки</a>";
+                            echo "<a href='zayavaNaObmen.php' class='btn'>Оформление заявки</a>";
                         } else {
                             echo "<a href='Entry.php' class='btn'>Оформление заявки</a>";
                         }

@@ -29,11 +29,11 @@
                 or die (mysqli_error($mysql));
 
             // Удаление связанных данных из таблицы `обмены`
-            $strSQL3 = mysqli_query($mysql, "DELETE FROM `обмены` WHERE заявка_id IN (SELECT заявка_id FROM `заявки_на_обмен` WHERE пользователь_id = '$id')") 
+            $strSQL3 = mysqli_query($mysql, "DELETE FROM `предложения_на_обмен` WHERE запрос_id IN (SELECT запрос_id FROM `запросы_на_обмен` WHERE пользователь_id = '$id')") 
                 or die (mysqli_error($mysql));
 
             // Удаление связанных данных из таблицы `заявки_на_обмен`
-            $strSQL4 = mysqli_query($mysql, "DELETE FROM `заявки_на_обмен` WHERE пользователь_id = '$id'") 
+            $strSQL4 = mysqli_query($mysql, "DELETE FROM `запросы_на_обмен` WHERE пользователь_id = '$id'") 
                 or die (mysqli_error($mysql));
 
             // Удаление связанных данных из таблицы `книги`
@@ -225,7 +225,6 @@
         <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
         <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
         <a href='MyBooks.php' class='btn'>Мои книги</a>
-        <a href='SubmitRequest.php' class='btn'>Создать заявку на обмен</a>
         <a href='my_exchanges.php' class='btn'>Мои обмены</a></br>
         <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
         
