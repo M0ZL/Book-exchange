@@ -1,9 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['пользователь_id']) || !isset($_POST['offer_id'])) {
-    header("Location: login.php");
-    exit();
-}
+// if (!isset($_SESSION['пользователь_id']) || !isset($_POST['offer_id'])) {
+//     header("Location: login.php");
+//     exit();
+// }
 
 // Подключение к базе данных
 $dbuser = 'mysql';
@@ -16,9 +16,12 @@ if ($mysql->connect_error) {
     die("Ошибка подключения: " . $mysql->connect_error);
 }
 $mysql->set_charset("utf8mb4");
-
-$offer_id = $_POST['offer_id'];
-$user_id = $_SESSION['пользователь_id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' || isset($_GET['offer_id'])){
+    $offer_id = $_POST['offer_id']?? $_GET['offer_id'];
+    $user_id = $_SESSION['пользователь_id'];
+}
+// $offer_id = $_POST['offer_id'];
+// $user_id = $_SESSION['пользователь_id'];
 
 // Начинаем транзакцию
 $mysql->begin_transaction();

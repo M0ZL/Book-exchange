@@ -151,6 +151,10 @@ or die ('Ошибка ' . mysqli_error($mysql));
                 echo "<p>Фамилия: " . $user['фамилия'] . "</p>";
                 echo "<p>Имя: " . $user['имя'] . "</p>";
                 echo "<p>Отчество: " . $user['отчество'] . "</p>";
+                if($user["статус"]=="бан"){
+                    echo "<p style=color:red;>ЗАБЛОКИРОВАН</p>";
+                }
+                
                 
                 // Получаем книги, выставленные пользователем
                 $books_query = mysqli_query($mysql, "SELECT * FROM книги WHERE пользователь_id = $user_id");

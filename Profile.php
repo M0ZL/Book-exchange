@@ -149,6 +149,16 @@
         transition: background-color 0.3s;
         margin-top: 10px; /* Отступ между кнопками и рамкой аватарки */
     }
+    .h5 {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #333;
+        color: red;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        margin-top: 10px; /* Отступ между кнопками и рамкой аватарки */
+    }
     .btn:hover {
         background-color: #555;
     }
@@ -214,19 +224,41 @@
    
     <form action="Profile.php" method="post" onsubmit="return confirmDelete()">
     <?php
-
+         $query1 = "SELECT статус FROM пользователи WHERE пользователь_id = '$id'";
+         $result1 = mysqli_query($mysql, $query1) or die(mysqli_error($mysql));
+    
         if (isset($_SESSION['prof_user'])) {
             echo "<h3>Вы вошли как: " . $_SESSION['роль'] . "</h3>"; // Отображаем роль пользователя
             echo  $_SESSION['prof_user'];
         }
-
-        echo "<div align='center'>
-        <input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
-        <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
-        <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
-        <a href='MyBooks.php' class='btn'>Мои книги</a>
-        <a href='my_exchanges.php' class='btn'>Мои обмены</a></br>
-        <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
+        if($user1 = mysqli_fetch_assoc($result1)) {
+            $status = $user1['статус']; // Получаем значение статуса
+           
+            
+            if($status == "бан") { // Сравниваем именно значение статуса
+                echo "<div align='center'>
+                <h4 class='h5' >Ваш аккаунт ЗАБЛОКИРОВАН</h4></br></br>
+                <input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
+                <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
+                <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
+            }
+            else {
+                echo "<div align='center'>
+                <input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
+                <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
+                <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
+                <a href='MyBooks.php' class='btn'>Мои книги</a>
+                <a href='my_exchanges.php' class='btn'>Мои обмены</a></br>
+                <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
+            }
+        }
+        // echo "<div align='center'>
+        // <input type='submit' class='btn' name='y' value='Удалить аккаунт'></br></br>    
+        // <a href='ProfileEdit.php' class='btn'>Редактировать аккаунт</a>
+        // <a href='Logout.php' class='btn'>Выйти из аккаунта</a></br></br>
+        // <a href='MyBooks.php' class='btn'>Мои книги</a>
+        // <a href='my_exchanges.php' class='btn'>Мои обмены</a></br>
+        // <p><a href='index.php' class='btn'>На главную страницу</a><br><br></div>";
         
         mysqli_close($mysql);
     ?>

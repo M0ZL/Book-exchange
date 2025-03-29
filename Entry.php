@@ -382,7 +382,7 @@ mysqli_close($mysql);
 
         // При загрузке страницы проверяем, нужно ли скрыть кнопку
         if (errorMessage) {
-            loginButton.style.display = 'none'; // Скрываем кнопку, если есть ошибка
+          //  loginButton.style.display = 'none'; // Скрываем кнопку, если есть ошибка
         }
     });
 </script>

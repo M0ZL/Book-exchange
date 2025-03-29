@@ -325,10 +325,44 @@ $result_received = $stmt_received->get_result();
                         <p><strong>Ваш трек-номер:</strong> <?= htmlspecialchars($row['трек_номер_а']) ?></p>
                         <p><strong>Трек-номер получателя:</strong> <?= htmlspecialchars($row['трек_номер_б']) ?></p>
                         <?php if (!$row['доставка_подтверждена_а']): ?>
-                            <form method="POST" action="confirm_delivery.php">
+                            <form method="POST" action="confirm_delivery.php" id="deliveryForm">
                                 <input type="hidden" name="offer_id" value="<?= $row['предложение_id'] ?>">
-                                <button type="submit">Подтвердить получение</button>
+                                <button type="button" onclick="showReviewModal()">Подтвердить получение</button>
                             </form>
+
+                            <!-- Модальное окно для отзыва -->
+                            <div id="reviewModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; z-index:1000; border:1px solid #ccc; box-shadow:0 0 10px rgba(0,0,0,0.1);">
+                                <h3>Напишите отзыв</h3>
+                                <form id="reviewForm" method="POST" action="save_review.php">
+                                    <input type="hidden" name="offer_id" value="<?= $row['предложение_id'] ?>">
+                                    <textarea name="комментарий" rows="5" cols="40" required></textarea><br><br>
+                                    Оценка:
+                                    <select name="оценка">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="4">5</option>
+                                    </select><br>
+                                    <button type="submit">Отправить</button>
+                                    <button type="button" onclick="closeModal()">Отказаться</button>
+                                </form>
+                            </div>
+                            <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;"></div>
+
+                            <script>
+                            function showReviewModal() {
+                                document.getElementById('reviewModal').style.display = 'block';
+                                document.getElementById('overlay').style.display = 'block';
+                            }
+
+                            function closeModal() {
+                                document.getElementById('reviewModal').style.display = 'none';
+                                document.getElementById('overlay').style.display = 'none';
+                                // Отправляем форму подтверждения получения
+                                document.getElementById('deliveryForm').submit();
+                            }
+                            </script>
                         <?php else: ?>
                             <p>Ожидание подтверждения от получателя.</p>
                         <?php endif; ?>
@@ -374,10 +408,44 @@ $result_received = $stmt_received->get_result();
                         <p><strong>Ваш трек-номер:</strong> <?= htmlspecialchars($row['трек_номер_б']) ?></p>
                         <p><strong>Трек-номер отправителя:</strong> <?= htmlspecialchars($row['трек_номер_а']) ?></p>
                         <?php if (!$row['доставка_подтверждена_б']): ?>
-                            <form method="POST" action="confirm_delivery.php">
+                            <form method="POST" action="confirm_delivery.php" id="deliveryForm">
                                 <input type="hidden" name="offer_id" value="<?= $row['предложение_id'] ?>">
-                                <button type="submit">Подтвердить получение</button>
+                                <button type="button" onclick="showReviewModal()">Подтвердить получение</button>
                             </form>
+
+                            <!-- Модальное окно для отзыва -->
+                            <div id="reviewModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; z-index:1000; border:1px solid #ccc; box-shadow:0 0 10px rgba(0,0,0,0.1);">
+                                <h3>Напишите отзыв</h3>
+                                <form id="reviewForm" method="POST" action="save_review.php">
+                                    <input type="hidden" name="offer_id" value="<?= $row['предложение_id'] ?>">
+                                    <textarea name="комментарий" rows="5" cols="40" required></textarea><br><br>
+                                    Оценка:
+                                    <select name="оценка">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="4">5</option>
+                                    </select><br>
+                                    <button type="submit">Отправить</button>
+                                    <button type="button" onclick="closeModal()">Отказаться</button>
+                                </form>
+                            </div>
+                            <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999;"></div>
+
+                            <script>
+                            function showReviewModal() {
+                                document.getElementById('reviewModal').style.display = 'block';
+                                document.getElementById('overlay').style.display = 'block';
+                            }
+
+                            function closeModal() {
+                                document.getElementById('reviewModal').style.display = 'none';
+                                document.getElementById('overlay').style.display = 'none';
+                                // Отправляем форму подтверждения получения
+                                document.getElementById('deliveryForm').submit();
+                            }
+                            </script>
                         <?php else: ?>
                             <p>Ожидание подтверждения от отправителя.</p>
                         <?php endif; ?>

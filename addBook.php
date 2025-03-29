@@ -166,10 +166,10 @@ session_start();
         }
 
         // Проверка на начало с цифры
-        if (/^\d/.test(title.value)) {
-            document.getElementById("titleError").style.display = "block";
-            isValid = false;
-        }
+        // if (/^\d/.test(title.value)) {
+        //     document.getElementById("titleError").style.display = "block";
+        //     isValid = false;
+        // }
         if (/^\d/.test(author.value)) {
             document.getElementById("authorError").style.display = "block";
             isValid = false;
