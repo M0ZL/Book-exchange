@@ -72,6 +72,7 @@ $result_received = $stmt_received->get_result();
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <title>Мои обмены</title>
     <style>
         .shipping-instruction {
@@ -294,6 +295,7 @@ $result_received = $stmt_received->get_result();
                 <a href="index.php" class="btn">На главную</a>
                 <a href="Profile.php" class="btn">Личный аккаунт</a>
         </div>
+    <div class="container">
     <h1>Мои обмены</h1>
 
     <h2>Предложенные обмены</h2>
@@ -456,7 +458,13 @@ $result_received = $stmt_received->get_result();
     <?php else: ?>
         <p>У вас нет полученных обменов.</p>
     <?php endif; ?>
-
+    </div>
+    <footer>
+        <p>Контактная информация:<br>
+        Телефон: +7 (928) 2088745 (звонок бесплатный по всей России!)<br>
+        Наш режим работы: Понедельник - Воскресенье: 10:00 – 18:00<br>
+        Электронная почта: <a href="mailto:BooksForExchange@gmail.com">Напишите нам!</a></p>
+    </footer>
 </body>
 </html>
 <?php

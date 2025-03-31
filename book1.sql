@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Мар 29 2025 г., 23:55
+-- Время создания: Мар 31 2025 г., 14:09
 -- Версия сервера: 10.3.22-MariaDB
 -- Версия PHP: 7.1.33
 
@@ -160,8 +160,8 @@ CREATE TABLE `запросы_на_обмен` (
   `desired_genre` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `desired_condition` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `desired_other` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `delivery_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `recipient_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `delivery_address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recipient_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `пользователь_id` int(11) NOT NULL,
   `статус` enum('ожидание','подтвержден','отклонен') COLLATE utf8mb4_unicode_ci DEFAULT 'ожидание',
   `дата_создания` timestamp NULL DEFAULT current_timestamp()
