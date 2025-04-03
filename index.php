@@ -212,7 +212,7 @@ session_start();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header><br>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+   
     <?php
         if(isset($_SESSION['logged_user'])){
             echo '

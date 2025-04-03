@@ -241,7 +241,7 @@ if (isset($_GET['genre'])) {
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header><br>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+   
         <div align="center">
                 <a href="index.php" class="btn">На главную</a>
                 <a href="Profile.php" class="btn">Личный аккаунт</a>

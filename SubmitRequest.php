@@ -152,7 +152,7 @@ $userBooks = mysqli_fetch_all($queryUserBooks, MYSQLI_ASSOC);
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+    
     <div class="container">
         <h1>Создание заявки на обмен книгами</h1>
 

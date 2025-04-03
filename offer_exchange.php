@@ -244,7 +244,7 @@ $result = $stmt->get_result();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+   
     <form class="container" method="POST" action="process_exchange.php">
     <h1>Предложить обмен</h1>
     <input type="hidden" name="request_id" value="<?= $request_id ?>">

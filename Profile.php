@@ -203,7 +203,7 @@
     <img src="images/logobooks.png" alt="Логотип">
     <img src="images/r.png" alt="Логотип">
 </header>
-<img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+
 <script>
     function confirmDelete() {
         return confirm("Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.");
