@@ -148,7 +148,7 @@
     <img src="images/logobooks.png" alt="Логотип">
     <img src="images/r.png" alt="Логотип">
 </header>
-<img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+
 <div class='container'>
     <h2>Мои обмены</h2>
     <?php

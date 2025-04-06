@@ -193,11 +193,11 @@ session_start();
         }
         .fixed-gif {
             position: fixed;
-            right: 40px;
+            right: 2px;
             top: 50%; /* Начальная позиция по вертикали */
             transform: translateY(-50%); /* Центрирование по вертикали */
             z-index: 1000; /* Убедитесь, что гифка находится поверх других элементов */
-            width: 150px; /* Ширина гифки */
+            width: 70px; /* Ширина гифки */
             height: auto; /* Высота подстраивается автоматически */
         }
         .tbl td {
@@ -212,7 +212,7 @@ session_start();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header><br>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+   
     <?php
         if(isset($_SESSION['logged_user'])){
             echo '

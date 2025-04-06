@@ -12,6 +12,7 @@ or die ('Ошибка ' . mysqli_error($mysql));
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <title>Запрос на обмен</title>
     <style type="text/css">
         html, body {
@@ -215,13 +216,14 @@ or die ('Ошибка ' . mysqli_error($mysql));
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header><br>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+    
         <div align="center">
                 <a href="index.php" class="btn">На главную</a>
                 <a href="Profile.php" class="btn">Личный аккаунт</a>
         </div>
+    
+    <form class="container" action="zaprosForm.php" method="post">
     <h1>Запрос на обмен</h1>
-    <form action="zaprosForm.php" method="post">
         <h2>Книга предлагаемая к обмену</h2>
         <select name="offered_book_id" required>
             <?php
@@ -273,7 +275,7 @@ or die ('Ошибка ' . mysqli_error($mysql));
         Другие характеристики: <textarea name="desired_other"></textarea><br>
 
         <input type="checkbox" id="agreeCheckbox" name="agree" required> Подтверждаю правильность введенных данных и согласие на обмен<br>
-        <input type="submit" id="submitButton" value="Отправить запрос" disabled>
+        <input type="submit" class="btn" id="submitButton" value="Отправить запрос" disabled>
 
         <script>
         const checkbox = document.getElementById('agreeCheckbox');
@@ -284,5 +286,11 @@ or die ('Ошибка ' . mysqli_error($mysql));
         });
         </script>
     </form>
+    <footer>
+        <p>Контактная информация:<br>
+        Телефон: +7 (928) 2088745 (звонок бесплатный по всей России!)<br>
+        Наш режим работы: Понедельник - Воскресенье: 10:00 – 18:00<br>
+        Электронная почта: <a href="mailto:BooksForExchange@gmail.com">Напишите нам!</a></p>
+    </footer>
 </body>
 </html>

@@ -202,7 +202,7 @@ session_start();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+    
     <h1>Добавить книгу</h1>
     <div class="container">
         <form action="insert_book.php" method="POST" enctype="multipart/form-data" class="order-panel" onsubmit="return validateForm();">

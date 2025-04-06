@@ -141,7 +141,7 @@ session_start();
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+   
     <div class="container">
             <h2>Полный список книг для обмена:</h2>
         </h2>

@@ -206,7 +206,7 @@ mysqli_close($mysql);
         <a href="?logout=1" class="btn">Выйти</a>
     <?php endif; ?>
 </header>
-<img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+
 <div class="container">
     <h2 align="center">Войти</h2>
     <form action="Entry.php" method="post">

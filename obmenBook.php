@@ -38,6 +38,7 @@ if (isset($_GET['genre'])) {
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ico.png">
     <title>Обмен книгами</title>
     <style type="text/css">
         html, body {
@@ -240,12 +241,13 @@ if (isset($_GET['genre'])) {
         <img src="images/logobooks.png" alt="Логотип">
         <img src="images/r.png" alt="Логотип">
     </header><br>
-    <img src="images/GamerGIF_PORNO.gif" alt="Анимация" class="fixed-gif">
+   
         <div align="center">
                 <a href="index.php" class="btn">На главную</a>
                 <a href="Profile.php" class="btn">Личный аккаунт</a>
         </div>
 <body>
+    <div class="container">
     <h1>Обмен книгами</h1>
 
     <!-- Фильтр по жанру -->
@@ -273,12 +275,19 @@ if (isset($_GET['genre'])) {
                 <strong>Пользователь:</strong> <?= $row['user_nickname'] ?><br>
                 
                 <?php if ($row['request_user_id'] != $user_id): ?>
-                    <a href="offer_exchange.php?request_id=<?= $row['запрос_id'] ?>">Предложить обмен</a>
+                    <a class="btn" href="offer_exchange.php?request_id=<?= $row['запрос_id'] ?>">Предложить обмен</a>
                 <?php else: ?>
                     <span style="color: gray;">Это ваш запрос</span>
                 <?php endif; ?>
             </li>
         <?php endwhile; ?>
     </ul>
+    </div>
+    <footer>
+        <p>Контактная информация:<br>
+        Телефон: +7 (928) 2088745 (звонок бесплатный по всей России!)<br>
+        Наш режим работы: Понедельник - Воскресенье: 10:00 – 18:00<br>
+        Электронная почта: <a href="mailto:BooksForExchange@gmail.com">Напишите нам!</a></p>
+    </footer>
 </body>
 </html>
