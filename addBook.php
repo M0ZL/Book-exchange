@@ -203,8 +203,9 @@ session_start();
         <img src="images/r.png" alt="Логотип">
     </header>
     
-    <h1>Добавить книгу</h1>
+    
     <div class="container">
+        <h1>Добавить книгу</h1>
         <form action="insert_book.php" method="POST" enctype="multipart/form-data" class="order-panel" onsubmit="return validateForm();">
             <label for="title">Название:</label>
             <input type="text" id="title" name="title" required>
